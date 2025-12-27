@@ -1,0 +1,547 @@
+﻿<Window x:Class="DocMind.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:behaviors="clr-namespace:DocMind"
+        xmlns:local="clr-namespace:DocMind"
+        mc:Ignorable="d"
+        Title="DocInsight" Height="1080" Width="1920"
+        WindowStartupLocation="CenterScreen"
+    Background="#E9ECEF"
+        >
+    <Window.Resources>
+        <local:StringIsNotNullOrEmptyConverter x:Key="StringIsNotNullOrEmptyConverter"/>
+        <local:BooleanToHorizontalAlignmentConverter x:Key="BooleanToHorizontalAlignmentConverter"/>
+        <local:BooleanToBrushConverter x:Key="BooleanToBrushConverter"/>
+        <local:EqualsConverter x:Key="EqualsConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:FilePreviewTemplateSelector x:Key="FilePreviewTemplateSelector">
+            <local:FilePreviewTemplateSelector.TxtTemplate>
+                <DataTemplate>
+                    <RichTextBox x:Name="OriginalTextBox"
+             VerticalScrollBarVisibility="Auto"
+         IsReadOnly="True" 
+         BorderThickness="0"                            
+         Background="Transparent"
+         FontSize="16"
+         >
+                        <!--local:RichTextBoxHelper.BindableDocument="{Binding Display}"-->
+                        <i:Interaction.Behaviors>
+                            <behaviors:FlowDocumentBehavior BoundDocument="{Binding Display}"/>
+                        </i:Interaction.Behaviors>
+
+                    </RichTextBox>
+                </DataTemplate>
+            </local:FilePreviewTemplateSelector.TxtTemplate>
+
+            <local:FilePreviewTemplateSelector.WordTemplate>
+                <DataTemplate>
+                    <DocumentViewer Document="{Binding Display}" Margin="10"/>
+                </DataTemplate>
+            </local:FilePreviewTemplateSelector.WordTemplate>
+
+            <local:FilePreviewTemplateSelector.ExcelTemplate>
+                <DataTemplate>
+                    <DataGrid 
+                        AutoGenerateColumns="True" 
+                        Margin="10"
+                        ItemsSource="{Binding Display.DefaultView}"
+                        CanUserAddRows="False"
+                        HorizontalAlignment="Stretch"
+                        ColumnWidth="*"
+                        Width="auto"/>
+
+                </DataTemplate>
+            </local:FilePreviewTemplateSelector.ExcelTemplate>
+
+            <local:FilePreviewTemplateSelector.DefaultTemplate>
+                <DataTemplate>
+                    <TextBlock Text="请选择要预览的文件" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"
+                               Foreground="#999999"/>
+                </DataTemplate>
+            </local:FilePreviewTemplateSelector.DefaultTemplate>
+        </local:FilePreviewTemplateSelector>
+
+        <Storyboard x:Key="BaseAnimation" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1.0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.0" Value="0.2"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="AnimateDot1" RepeatBehavior="Forever">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1.0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0.2"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:1.0" Value="0.2"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Key="AnimateDot2" RepeatBehavior="Forever" BeginTime="0:0:0.2">
+        </Storyboard>
+
+        <Storyboard x:Key="AnimateDot3" RepeatBehavior="Forever" BeginTime="0:0:0.4">
+        </Storyboard>
+
+    </Window.Resources>
+
+    <!--<Window.DataContext>
+        <local:ChatViewModel />
+    </Window.DataContext>-->
+
+    <Grid Margin="10">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <Grid  Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- 给父Grid添加行定义，明确区分按钮区和文件列表区 -->
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <!-- 上传按钮行（固定高度） -->
+                    <RowDefinition Height="auto"/>
+                    <!-- 文件列表行（剩余空间） -->
+                </Grid.RowDefinitions>
+
+                <!-- 标题栏（上传按钮）放在第0行 -->
+                <Grid Grid.Row="0" Background="#F5F5F5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- 上传按钮 -->
+                    <Button 
+            Grid.Column="0"
+            Content="上传文件" 
+            Command="{Binding UploadFileCommand}"
+            Height="30" 
+            Margin="10,0"
+            Padding="8,0"
+            Background="#81C784"
+            Foreground="White"
+            BorderThickness="0"/>
+
+                    <!-- 已上传数量提示 -->
+                    <TextBlock 
+            Grid.Column="1"
+            Text="{Binding UploadedFiles.Count, StringFormat='已上传 ({0})'}"  
+            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            Margin="0,0,10,0"
+            Foreground="#666666"/>
+                </Grid>
+
+                <ScrollViewer 
+        Grid.Row="1"  
+                Height="Auto" 
+        MaxHeight="120" 
+        VerticalScrollBarVisibility="Auto"
+        HorizontalScrollBarVisibility="Disabled">
+
+                    <ItemsControl ItemsSource="{Binding UploadedFiles}">
+                        <!-- ItemTemplate保持不变 -->
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:DocumentFile}">
+                                <Grid Height="36" Margin="0,2">
+
+                                    <Grid.Style>
+                                        <Style TargetType="Grid">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Style.Triggers>
+                                                <!-- 用DataTrigger + 多值绑定 + 转换器，判断当前项是否等于SelectedFile -->
+                                                <DataTrigger Value="True">
+                                                    <DataTrigger.Binding>
+                                                        <MultiBinding Converter="{StaticResource EqualsConverter}">
+                                                            <!-- 绑定1：当前DocumentFile项 -->
+                                                            <Binding/>
+                                                            <!-- 绑定2：ViewModel中的SelectedFile -->
+                                                            <Binding 
+                                RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
+                                Path="DataContext.SelectedFile"/>
+                                                        </MultiBinding>
+                                                    </DataTrigger.Binding>
+                                                    <!-- 选中时的样式：淡蓝色背景 -->
+
+                                                    <Setter Property="Background" Value="#F5F0E6"/>
+                                                    <!-- 文件名选中样式 -->
+
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Grid.Style>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand">
+                                        <!-- 通过 InputBinding 绑定鼠标事件与命令 -->
+                                        <StackPanel.InputBindings>
+                                            <!-- 鼠标按下事件绑定 -->
+                                            <MouseBinding 
+            MouseAction="LeftClick"  
+                                                Command="{Binding Path=DataContext.SelectFileCommand, 
+                              RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+            CommandParameter="{Binding}"/>
+
+                                        </StackPanel.InputBindings>
+
+                                        <TextBlock Text="📄 " FontSize="14"/>
+                                        <TextBlock 
+        Text="{Binding FileName}"  
+        Margin="2,0,5,0"
+        ToolTip="{Binding FilePath}"  
+        Foreground="#333333">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <!-- 默认文字样式 -->
+                                                    <Setter Property="Foreground" Value="#333333"/>
+                                                    <Setter Property="FontWeight" Value="Normal"/>
+
+                                                    <!-- 选中时的文字样式 -->
+                                                    <Style.Triggers>
+                                                        <DataTrigger Value="True">
+                                                            <DataTrigger.Binding>
+                                                                <MultiBinding Converter="{StaticResource EqualsConverter}">
+                                                                    <!-- 绑定1：当前DocumentFile项 -->
+                                                                    <Binding/>
+                                                                    <!-- 绑定2：ViewModel中的SelectedFile -->
+                                                                    <Binding 
+                                RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
+                                Path="DataContext.SelectedFile"/>
+                                                                </MultiBinding>
+                                                            </DataTrigger.Binding>
+                                                            <!-- 选中时的文字颜色+加粗 -->
+                                                            <Setter Property="Foreground" Value="Yellow"/>
+                                                            <Setter Property="FontWeight" Value="Medium"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+
+                                        </TextBlock>
+
+                                        <TextBlock 
+        Text="{Binding FileSizeKB, StringFormat='({0}KB)'}"  
+        FontSize="12"
+        Foreground="#999999"/>
+                                    </StackPanel>
+
+                                    <Button 
+                        Grid.Column="1"
+                        Content="×" 
+                        Width="24" 
+                        Height="24"
+                        Background="Transparent"
+                        Foreground="#FF5252"
+                        BorderThickness="0"
+                        Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                        CommandParameter="{Binding}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- 聊天消息区域，带滚动条 -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                      x:Name="ChatScrollViewer">
+                <ItemsControl ItemsSource="{Binding Messages}">
+
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type local:Message}">
+                            <!-- 单条消息容器 -->
+                            <Grid Margin="5,3">
+                                <!-- 对齐方式：用户消息靠右，回复消息靠左 -->
+                                <Grid HorizontalAlignment="{Binding IsSentByUser, Converter={StaticResource BooleanToHorizontalAlignmentConverter}}">
+
+                                    <!-- 消息气泡：用Style+DataTrigger控制样式 -->
+                                    <Border 
+                    x:Name="MessageBorder"
+                    CornerRadius="8" 
+                    Padding="12,8" 
+                    BorderThickness="1">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <!-- 默认样式（回复消息） -->
+                                                <Setter Property="Background" Value="#F0F0F0"/>
+                                                <Setter Property="BorderBrush" Value="#DDDDDD"/>
+                                                <!-- 用户消息样式（DataTrigger触发） -->
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSentByUser}" Value="True">
+                                                        <Setter Property="Background" Value="#4A90E2"/>
+                                                        <Setter Property="BorderBrush" Value="#3A80D2"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <StackPanel>
+                                            <TextBlock 
+                            Margin="4"
+                            FontSize="16"
+                            Text="{Binding Text}"  
+                            MinHeight="20"
+                            TextWrapping="Wrap">
+                                                
+             <b:Interaction.Behaviors>
+                <local:RichTextHyperlinkBehavior 
+                    JumpToPageCommand="{Binding DataContext.JumpToPageCommand, 
+                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+            </b:Interaction.Behaviors>
+
+                                            </TextBlock>
+
+                                            <!-- 时间戳：样式保留不变 -->
+                                            <TextBlock 
+                            Text="{Binding Timestamp, StringFormat='HH:mm'}" 
+                            FontSize="10" 
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Right">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <!-- 默认样式（回复消息） -->
+                                                        <Setter Property="Foreground" Value="#666666"/>
+                                                        <!-- 用户消息时间（DataTrigger触发） -->
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsSentByUser}" Value="True">
+                                                                <Setter Property="Foreground" Value="#EEEEEE"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                </ItemsControl>
+            </ScrollViewer>
+
+            <Grid Grid.Row="2" Margin="0,10,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                    <TextBlock Text="{Binding Hint}" VerticalAlignment="Center" Foreground="#888888" FontSize="12" Margin="0,0,100,0"/>
+
+                    <StackPanel x:Name="LoadingDotsPanel" Orientation="Horizontal" Margin="20 0 20 0">
+
+                        <TextBlock Text="." Margin="1,0" FontSize="20" Foreground="#4A90E2">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Opacity" Value="0.2"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Hint, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard x:Name="StartDot1" Storyboard="{StaticResource AnimateDot1}"/>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <StopStoryboard BeginStoryboardName="StartDot1"/>
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBlock Text="." Margin="1,0" FontSize="20" Foreground="#4A90E2">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Opacity" Value="0.2"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Hint, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard x:Name="StartDot2" Storyboard="{StaticResource AnimateDot2}"/>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <StopStoryboard BeginStoryboardName="StartDot2"/>
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <TextBlock Text="." Margin="1,0" FontSize="20" Foreground="#4A90E2">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Opacity" Value="0.2"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Hint, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" Value="True">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard x:Name="StartDot3" Storyboard="{StaticResource AnimateDot3}"/>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <StopStoryboard BeginStoryboardName="StartDot3"/>
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+
+
+                    <TextBlock Text="精准溯源" VerticalAlignment="Center" Foreground="#888888" FontSize="12" Margin="0,0,5,0"/>
+
+                    <ToggleButton IsChecked="{Binding IsSourcingEnabled}" 
+                  ToolTip="开启后将验证答案来源，耗时稍长"
+                  Width="60" 
+                        Content="启用"/>
+
+                </StackPanel>
+            </Grid>
+
+            <!-- 输入区域 -->
+            <Grid Grid.Row="3" Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="87*" />
+                    <ColumnDefinition Width="308*"/>
+
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="message"
+                    Grid.Column="0" 
+                     Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" 
+                     Margin="0,0,10,0"
+                     KeyDown="TextBox_KeyDown"
+                     GotFocus="TextBox_GotFocus"
+                     LostFocus="TextBox_LostFocus"
+                     Height="40"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="#DDDDDD"
+                     BorderThickness="1"
+                     Padding="10" Grid.ColumnSpan="2"/>
+
+                <Button Grid.Column="2" 
+     Content="发送" 
+     Command="{Binding SendMessageCommand}"
+     Width="70"
+     Height="40"
+     Foreground="White">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border 
+                Background="#4A90E2" 
+                CornerRadius="6" 
+                                BorderThickness="0">
+                                <ContentPresenter 
+                    HorizontalAlignment="Center" 
+                    VerticalAlignment="Center"
+                    />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <Button Grid.Column="3" 
+Content="跳转" 
+                        Click="tiaozhuan"
+Width="70"
+Height="40"
+Foreground="White">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border 
+           Background="#4A90E2" 
+           CornerRadius="6" 
+                           BorderThickness="0">
+                                <ContentPresenter 
+               HorizontalAlignment="Center" 
+               VerticalAlignment="Center"
+               />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+            </Grid>
+        </Grid>
+
+        <!-- 右侧：文件预览区域 -->
+        <Grid Grid.Column="1" Margin="10" Background="#FAFAFA" >
+            <!-- 预览区域标题 -->
+            <Grid Height="40" Background="#F5F5F5" VerticalAlignment="Top">
+                <TextBlock Text="{Binding SelectedFile.FileName, FallbackValue='文件预览'}" 
+                           Margin="10,0" 
+                           VerticalAlignment="Center" 
+                           FontWeight="Medium"/>
+            </Grid>
+
+            <!-- 动态预览内容 -->
+            <ContentControl 
+                x:Name="previewContentControl"
+                Margin="0,40,0,0"
+                Content="{Binding SelectedFile}"
+                ContentTemplateSelector="{StaticResource FilePreviewTemplateSelector}"/>
+        </Grid>
+
+        <Grid 
+            Grid.ColumnSpan="2"
+            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Background="#80000000"  
+            ZIndex="9999">
+
+            <StackPanel 
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center"
+                Orientation="Vertical"
+                Margin="20">
+
+                <ProgressBar 
+                    Width="200" 
+                    Height="8" 
+                    IsIndeterminate="True"  
+                    Foreground="White"/>
+
+                <TextBlock 
+                    Text="处理中，请稍候..." 
+                    Margin="0,10,0,0" 
+                    Foreground="White" 
+                    FontSize="14"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+
+
+</Window>
