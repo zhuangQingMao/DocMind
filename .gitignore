@@ -1,0 +1,30 @@
+#-----------------------------------------------------------------------------------
+# Visual Studio / .NET Core 忽略模板
+#-----------------------------------------------------------------------------------
+
+## Build artifacts
+[Bb]in/
+[Oo]bj/
+
+## User-specific files
+*.user
+*.userprefs
+*.suo
+
+## Visual Studio cache/solution files
+.vs/
+*.sln.docstates
+*.vsp
+*.pdb
+*.pidb
+*.log
+*.rpt
+*.cache
+
+## NuGet packages
+packages/
+*.nupkg
+.nuget/
+
+## Mac/Linux OS files
+.DS_Store

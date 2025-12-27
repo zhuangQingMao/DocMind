@@ -9,6 +9,7 @@ using System.Windows;
 
 namespace DocMind
 {
+    //test push
     public partial class ChatViewModel : ObservableObject
     {
         //Field
