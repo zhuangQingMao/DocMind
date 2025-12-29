@@ -20,4 +20,17 @@ namespace DocMind
             //MetadataToHighlight = metadata;
         }
     }
+
+    public class HighlightSpan
+    {
+        // 句子在整个原始文档文本中的起始字符索引
+        public int StartCharIndex { get; set; }
+
+        // 句子在整个原始文档文本中的结束字符索引
+        public int EndCharIndex { get; set; }
+
+        public string targetText { get; set; }
+
+
+    }
 }
