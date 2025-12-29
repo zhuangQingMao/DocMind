@@ -15,14 +15,12 @@ namespace DocMind
     {
         private readonly double Temperature = 0.7;
         private readonly int Max_tokens = 2048;
-        private const string ApiKey = "替换为您的API key";
-        private const string ApiEndpoint = "替换为您的API Endpoint";
         private readonly HttpClient _httpClient;
 
         public LLMChatService()
         {
             _httpClient = new HttpClient();
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {ApiKey}");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {LlmApi.ApiKey}");
         }
 
         private HttpRequestMessage GetRequest(string userMessage, string systemMessage, bool isStream = false)
@@ -52,7 +50,7 @@ namespace DocMind
 
             var content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, ApiEndpoint)
+            var request = new HttpRequestMessage(HttpMethod.Post, LlmApi.ApiEndpoint)
             {
                 Content = content
             };
@@ -109,7 +107,7 @@ namespace DocMind
                         if (!string.IsNullOrEmpty(content))
                         {
                             fullResponse.Append(content);
-                            yield return content;
+                            yield return content;//
                         }
                     }
                 }
