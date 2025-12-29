@@ -28,3 +28,6 @@ packages/
 
 ## Mac/Linux OS files
 .DS_Store
+
+# 忽略特定的类文件，因为我们不希望共享这个实现
+/code/Rag/LlmApi.cs
