@@ -28,7 +28,6 @@
          Background="Transparent"
          FontSize="16"
          >
-                        <!--local:RichTextBoxHelper.BindableDocument="{Binding Display}"-->
                         <i:Interaction.Behaviors>
                             <behaviors:FlowDocumentBehavior BoundDocument="{Binding Display}"/>
                         </i:Interaction.Behaviors>

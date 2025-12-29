@@ -17,13 +17,5 @@ namespace DocMind
 
         [ObservableProperty]
         private bool _isStreamingFinished;
-
-        //[ObservableProperty]
-        //private FlowDocument? _flowDocumentContent;
-
-        //partial void OnTextChanged(string? oldValue, string? newValue)
-        //{
-        //    FlowDocumentContent = FlowDocumentHelper.ConvertToFlowDocument(newValue ?? "");
-        //}
     }
 }
