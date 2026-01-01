@@ -9,7 +9,6 @@ using System.Windows;
 
 namespace DocMind
 {
-    //test push
     public partial class ChatViewModel : ObservableObject
     {
         //Field
@@ -61,9 +60,7 @@ namespace DocMind
         }
 
         private static async Task OnUIAsync(Delegate method)
-        {
-            await Application.Current.Dispatcher.BeginInvoke(method);
-        }
+            => await Application.Current.Dispatcher.BeginInvoke(method);
 
         private async Task ShowHint(string hint)
             => await OnUIAsync(() => Hint = hint);
@@ -256,7 +253,15 @@ namespace DocMind
                     var secondAnswer = await _ragCoreService.secondChat(context, firstAnswer.ToString(), SelectedFile.FileType);
 
                     if (!string.IsNullOrWhiteSpace(secondAnswer))
-                        _messenger.Send(new HighlightMessage(SelectedFile.FileName) { SecondAnswer = secondAnswer });
+                    {
+                        var sentences = secondAnswer
+                            .Split(["|||"], StringSplitOptions.RemoveEmptyEntries)
+                            .Select(s => s.Trim())
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .ToList();
+
+                        _messenger.Send(new HighlightMessage(sentences));
+                    }
                 }
 
             }

@@ -8,32 +8,37 @@ namespace DocMind
 {
     public static class RichTextBoxHighlighter
     {
-        public static void HighlightByTextContent(RichTextBox richTextBox, string targetText)
+        public static void HighlightByTextContent(RichTextBox richTextBox, List<string> spans)
         {
-            if (richTextBox == null || string.IsNullOrWhiteSpace(targetText))
+            if (richTextBox == null)
                 return;
 
-            //ClearAllHighlights(richTextBox); // 可选：清除旧高亮
+            var fullText = GetFullRenderedText(richTextBox.Document);
+            var scrollViewer = FindVisualChild<ScrollViewer>(richTextBox);
+            TextPointer? firstHighlightPosition = null;
 
-            string fullText = GetFullRenderedText(richTextBox.Document);
-            int startIndex = fullText.IndexOf(targetText, StringComparison.Ordinal);
-            if (startIndex == -1) 
-                return;
-
-            var startPos = FindPositionByCharacterIndex(richTextBox.Document, startIndex);
-            var endPos = FindPositionByCharacterIndex(richTextBox.Document, startIndex + targetText.Length);
-
-            if (startPos != null && endPos != null)
+            foreach (var targetText in spans)
             {
-                new TextRange(startPos, endPos).ApplyPropertyValue(TextElement.BackgroundProperty, Brushes.Yellow);
+                int startIndex = fullText.IndexOf(targetText, StringComparison.Ordinal);
+                if (startIndex == -1)
+                    continue;
 
-                var scrollViewer = FindVisualChild<ScrollViewer>(richTextBox);
-                if (scrollViewer == null) 
-                    return;
+                var startPos = FindPositionByCharacterIndex(richTextBox.Document, startIndex);
+                var endPos = FindPositionByCharacterIndex(richTextBox.Document, startIndex + targetText.Length);
 
-                Rect rect = startPos.GetCharacterRect(LogicalDirection.Forward);
+                if (startPos != null && endPos != null)
+                {
+                    firstHighlightPosition ??= startPos;
 
-                double targetOffset = rect.Top;
+                    new TextRange(startPos, endPos).ApplyPropertyValue(TextElement.BackgroundProperty, Brushes.Yellow);
+                }
+            }
+
+            if (firstHighlightPosition != null && scrollViewer != null)
+            {
+                Rect rect = firstHighlightPosition.GetCharacterRect(LogicalDirection.Forward);
+
+                double targetOffset = rect.Top + scrollViewer.VerticalOffset;
 
                 targetOffset = Math.Max(0, Math.Min(targetOffset, scrollViewer.ScrollableHeight));
 
@@ -58,7 +63,7 @@ namespace DocMind
 
         private static TextPointer? FindPositionByCharacterIndex(FlowDocument doc, int targetIndex)
         {
-            if (targetIndex < 0) 
+            if (targetIndex < 0)
                 return null;
 
             TextPointer current = doc.ContentStart;
@@ -69,13 +74,13 @@ namespace DocMind
                 if (current.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
                 {
                     var textRun = current.GetTextInRun(LogicalDirection.Forward);
-                    if (textRun == null) 
+                    if (textRun == null)
                         break;
 
                     for (int i = 0; i < textRun.Length; i++)
                     {
                         char c = textRun[i];
-                        if (c == '\r' || c == '\n') 
+                        if (c == '\r' || c == '\n')
                             continue;
 
                         if (currentIndex == targetIndex)
@@ -117,7 +122,7 @@ namespace DocMind
 
         public static void ClearAllHighlights(RichTextBox richTextBox)
         {
-            if (richTextBox == null) 
+            if (richTextBox == null)
                 return;
 
             var fullRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
