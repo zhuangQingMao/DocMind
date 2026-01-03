@@ -32,7 +32,7 @@ namespace DocMind
             {
                 if (message.IsStreamingFinished)
                 {
-                    RenderFinalContent(message);
+                    AssociatedObject.Dispatcher.Invoke(() => RenderFinalContent(message));
                 }
                 else if (message is INotifyPropertyChanged npc)
                 {
