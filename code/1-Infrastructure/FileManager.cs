@@ -1,7 +1,8 @@
 ﻿using Aspose.Words;
-using DocMind.code.Infrastructure;
 using System.Data;
 using System.IO;
+using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Xps.Packaging;
 
 namespace DocMind
@@ -78,7 +79,32 @@ namespace DocMind
         public override async Task<object> GetDisplay()
         {
             var str = await GetContent();
-            return FlowDocumentHelper.ConvertToFlowDocument(str);
+            return ConvertToFlowDocument(str);
+        }
+
+        private static FlowDocument ConvertToFlowDocument(string text)
+        {
+            var flowDoc = new FlowDocument();
+
+            if (string.IsNullOrEmpty(text))
+                return flowDoc;
+
+            string[] lines = text.Split(['\n'], StringSplitOptions.None);
+
+            foreach (string line in lines)
+            {
+                string cleanedLine = line.TrimEnd('\r');
+
+                var paragraph = new System.Windows.Documents.Paragraph();
+
+                paragraph.Inlines.Add(new System.Windows.Documents.Run(cleanedLine));
+
+                paragraph.Margin = new Thickness(0);
+
+                flowDoc.Blocks.Add(paragraph);
+            }
+
+            return flowDoc;
         }
     }
 

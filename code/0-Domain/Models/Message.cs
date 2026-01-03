@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DocMind.code.Infrastructure;
-using System.Windows.Documents;
 
 namespace DocMind
 {

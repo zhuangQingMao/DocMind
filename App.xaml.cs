@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
-using DocMind.code.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
@@ -42,7 +41,7 @@ namespace DocMind
 
             services.AddSingleton<ILLMChatService, LLMChatService>();
 
-            
+
 
 
         }

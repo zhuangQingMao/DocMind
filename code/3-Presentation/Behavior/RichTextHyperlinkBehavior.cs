@@ -1,20 +1,22 @@
 ﻿using Microsoft.Xaml.Behaviors;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace DocMind
 {
     public class RichTextHyperlinkBehavior : Behavior<TextBlock>
     {
-        private Dispatcher _cachedDispatcher;
-        private TextBlock _cachedTextBlock;
+        private static readonly Regex PageReferenceRegex = new Regex(@"\[(\s*\d+(\s*,\s*\d+)*\s*)\]", RegexOptions.Compiled);
 
-        public static readonly DependencyProperty JumpToPageCommandProperty =
-            DependencyProperty.Register(nameof(JumpToPageCommand), typeof(ICommand), typeof(RichTextHyperlinkBehavior));
+        private static readonly DependencyProperty JumpToPageCommandProperty =
+            DependencyProperty.Register(
+                nameof(JumpToPageCommand),
+                typeof(ICommand),
+                typeof(RichTextHyperlinkBehavior));
 
         public ICommand JumpToPageCommand
         {
@@ -25,9 +27,6 @@ namespace DocMind
         protected override void OnAttached()
         {
             base.OnAttached();
-
-            _cachedTextBlock = AssociatedObject;
-            _cachedDispatcher = AssociatedObject.Dispatcher;
 
             if (AssociatedObject.DataContext is Message message)
             {
@@ -42,85 +41,79 @@ namespace DocMind
             }
         }
 
+        private void OnMessagePropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Message.IsStreamingFinished))
+            {
+                if (AssociatedObject != null && AssociatedObject.Dispatcher != null && sender is Message message && message.IsStreamingFinished)
+                {
+                    ((INotifyPropertyChanged)message).PropertyChanged -= OnMessagePropertyChanged;
+
+                    AssociatedObject.Dispatcher.Invoke(() => RenderFinalContent(message));
+                }
+            }
+        }
+
         protected override void OnDetaching()
         {
-            if (_cachedTextBlock != null && _cachedTextBlock.DataContext is Message message && message is INotifyPropertyChanged npc)
+            if (AssociatedObject != null && AssociatedObject.DataContext is Message message && message is INotifyPropertyChanged npc)
             {
                 npc.PropertyChanged -= OnMessagePropertyChanged;
             }
 
-            _cachedTextBlock = null;
-            _cachedDispatcher = null;
-
             base.OnDetaching();
-        }
-
-        private void OnMessagePropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Message.IsStreamingFinished))
-            {
-                if (_cachedDispatcher != null && sender is Message message && message.IsStreamingFinished)
-                {
-                    _cachedDispatcher.Invoke(() =>
-                    {
-                        if (_cachedTextBlock == null) return;
-
-                        ((INotifyPropertyChanged)message).PropertyChanged -= OnMessagePropertyChanged;
-
-                        RenderFinalContent(message);
-                    });
-                }
-            }
-        }
-
-        private string ExtractReferencePages(string fullText)
-        {
-            const string startTag = "【引用页码汇总】";
-
-            if (string.IsNullOrEmpty(fullText))
-            {
-                return string.Empty;
-            }
-
-            int startIndex = fullText.IndexOf(startTag, StringComparison.Ordinal);
-
-            if (startIndex == -1)
-            {
-                return string.Empty;
-            }
-
-            return fullText.Substring(startIndex);
         }
 
         private void RenderFinalContent(Message message)
         {
-            if (_cachedTextBlock == null) return;
+            if (AssociatedObject == null)
+                return;
 
-            string response = message.Text;
+            AssociatedObject.Inlines.Clear();
 
-            var pageStr = ExtractReferencePages(response);
+            var response = message.Text;
+            int currentPosition = 0;
 
-            message.Text = message.Text.Replace(pageStr, "【引用页码汇总】");
+            var matches = PageReferenceRegex.Matches(response);
 
-            pageStr = pageStr.Replace("【引用页码汇总】", "");
-            var pageArr = pageStr.Split(",");
-
-            foreach (var item in pageArr)
+            foreach (Match match in matches)
             {
-                if (int.TryParse(item, out int pageNumber))
+                if (match.Index > currentPosition)
                 {
-                    var str = $"[{item}]";
+                    var precedingText = response[currentPosition..match.Index];
+                    AssociatedObject.Inlines.Add(new Run(precedingText));
+                }
 
-                    Hyperlink hyperlink = new Hyperlink(new Run(str))
+                var fullMatchText = match.Value;
+                var pageNumbersStr = match.Groups[1].Value;
+                var pageNumbers = pageNumbersStr.Split(',');
+
+                foreach (var pageStr in pageNumbers)
+                {
+                    var combinedHyperlink = new Hyperlink()
                     {
                         Command = JumpToPageCommand,
-                        CommandParameter = pageNumber,
                         NavigateUri = null,
-                        ToolTip = $"跳转到第 {pageNumber} 页" 
+                        ToolTip = $"跳转到引用页：{pageStr}"
                     };
 
-                    _cachedTextBlock.Inlines.Add(hyperlink);
+                    if (int.TryParse(pageStr.Trim(), out int pageNumber))
+                    {
+                        combinedHyperlink.CommandParameter = pageNumber;
+                        var run = new Run($"[{pageNumber}]");
+                        combinedHyperlink.Inlines.Add(run);
+                    }
+
+                    AssociatedObject.Inlines.Add(combinedHyperlink);
                 }
+
+                currentPosition = match.Index + match.Length;
+            }
+
+            if (currentPosition < response.Length)
+            {
+                string remainingText = response[currentPosition..];
+                AssociatedObject.Inlines.Add(new Run(remainingText));
             }
         }
     }

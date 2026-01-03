@@ -1,12 +1,10 @@
-﻿using DocMind.code.Infrastructure;
-
-namespace DocMind
+﻿namespace DocMind
 {
     public class RagCoreService(
         IVectorRepository repository,
         IEmbeddingService embeddingService,
         IDocumentChunker documentChunker,
-        ILLMChatService lLMChatService ) : IRagCoreService
+        ILLMChatService lLMChatService) : IRagCoreService
     {
         private readonly Dictionary<FileType, string> _prompDict = new()
         {
@@ -27,9 +25,8 @@ namespace DocMind
 2. **内联引用规范：** 在回答的每个关键事实或句子之后，**立即**使用方括号 `[页码]` 标记出该信息的来源页码。如果一个信息来源于多个页码，请使用逗号分隔，例如 `[1, 5, 8]`。
 
 ## 输出结构要求：
-1. **回答主体格式：** 给出专业的回答主体，如果包含多个答案或要点，请使用序号 1.、2.、3. 等进行分点阐述。**【注意】回答主体必须包含内联引用标记。**
-2. **底部引用汇总：** 在回答主体结束后，**在单独一行**使用 **【引用页码汇总】** 作为前缀，列出所有实际引用到的**不重复**页码（页码间用逗号和空格分隔）。例如：`【引用页码汇总】1, 3, 5, 7`。
-3. **无答案处理：** 当资料中找不到答案时，直接回答“找不到相关信息”，并且不需要输出最后一行的【引用页码汇总】。"
+1. **回答主体格式：** 给出专业的回答主体，如果包含多个答案或要点，请使用序号 1.、2.、3. 等进行分点阐述。**【注意】回答主体必须包含内联引用标记。**。
+2. **无答案处理：** 当资料中找不到答案时，直接回答“找不到相关信息”。"
             }
         };
 
