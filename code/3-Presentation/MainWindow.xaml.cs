@@ -4,13 +4,16 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Wpf.Ui.Controls;
+using MessageBox = System.Windows.MessageBox;
+using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace DocMind
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IRecipient<HighlightMessage>, IRecipient<JumpPageMessage>
+    public partial class MainWindow : FluentWindow, IRecipient<HighlightMessage>, IRecipient<JumpPageMessage>
     {
         public MainWindow(ChatViewModel viewModel)
         {
@@ -198,6 +201,14 @@ namespace DocMind
             else
             {
                 MessageBox.Show("请先加载文档。", "错误");
+            }
+        }
+
+        private void OnDragWindow(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                DragMove();
             }
         }
     }
