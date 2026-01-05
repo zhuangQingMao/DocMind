@@ -97,15 +97,18 @@
         <local:ChatViewModel />
     </Window.DataContext>-->
 
-    <Grid Margin="10">
+    <Grid Margin="10" VerticalAlignment="Stretch">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50*"/>
             <ColumnDefinition Width="50*"/>
         </Grid.ColumnDefinitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <Grid  Margin="10">
+        <Grid  Grid.Column="0" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
@@ -478,23 +481,41 @@
             </Grid>
         </Grid>
 
-        <!-- 右侧：文件预览区域 -->
-        <Grid Grid.Column="1" Margin="10" Background="#FAFAFA" >
-            <!-- 预览区域标题 -->
-            <Grid Height="40" Background="#F5F5F5" VerticalAlignment="Top">
-                <TextBlock Text="{Binding SelectedFile.FileName, FallbackValue='文件预览'}" 
-                           Margin="10,0" 
-                           VerticalAlignment="Center" 
-                           FontWeight="Medium"/>
+        <ui:Card
+            VerticalAlignment="Stretch"
+            VerticalContentAlignment="Stretch"
+    Grid.Column="1"
+    Margin="10"
+    Padding="12">
+
+            <Grid Background="#FAFAFA" VerticalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 标题行 -->
+                <Grid Grid.Row="0" Background="#F5F5F5">
+                    <TextBlock
+                Text="{Binding SelectedFile.FileName, FallbackValue='文件预览'}"
+                Margin="10,0"
+                VerticalAlignment="Center"
+                FontWeight="Medium"/>
+                </Grid>
+
+                <!-- 内容行 -->
+                <ContentControl
+                    VerticalContentAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+            Grid.Row="1"
+            x:Name="previewContentControl"
+            Content="{Binding SelectedFile}"
+            ContentTemplateSelector="{StaticResource FilePreviewTemplateSelector}"/>
             </Grid>
 
-            <!-- 动态预览内容 -->
-            <ContentControl 
-                x:Name="previewContentControl"
-                Margin="0,40,0,0"
-                Content="{Binding SelectedFile}"
-                ContentTemplateSelector="{StaticResource FilePreviewTemplateSelector}"/>
-        </Grid>
+        </ui:Card>
+
+
 
         <Grid 
             Grid.ColumnSpan="2"
