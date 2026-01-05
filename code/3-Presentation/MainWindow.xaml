@@ -6,6 +6,7 @@
         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:behaviors="clr-namespace:DocMind"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:local="clr-namespace:DocMind"
         mc:Ignorable="d"
         Title="DocInsight" Height="1080" Width="1920"
@@ -467,31 +468,12 @@
                     </Button.Template>
                 </Button>
 
-                <Button Grid.Column="3" 
-Content="跳转" 
-                        Click="tiaozhuan"
-Width="70"
-Height="40"
-Foreground="White">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border 
-           Background="#4A90E2" 
-           CornerRadius="6" 
-                           BorderThickness="0">
-                                <ContentPresenter 
-               HorizontalAlignment="Center" 
-               VerticalAlignment="Center"
-               />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                <Button
+                    Grid.Column="3"
+                    
+    Width="160"
+    Height="40"
+    Content="Hello WPF UI" />
 
             </Grid>
         </Grid>
