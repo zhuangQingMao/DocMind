@@ -131,177 +131,173 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- 给父Grid添加行定义，明确区分按钮区和文件列表区 -->
-            <Grid Grid.Row="0" Margin="0,0,0,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <!-- 上传按钮行（固定高度） -->
-                    <RowDefinition Height="auto"/>
-                    <!-- 文件列表行（剩余空间） -->
-                </Grid.RowDefinitions>
 
-                <!-- 标题栏（上传按钮）放在第0行 -->
-                <Grid Grid.Row="0" Background="#F5F5F5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+            <ui:Card Grid.Row="0" 
+         Margin="0,0,0,10"
+         Padding="0"
+         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
 
-                    <!-- 上传按钮 -->
-                    <!--<Button 
-            Grid.Column="0"
-            Content="上传文件" 
-            Command="{Binding UploadFileCommand}"
-            Height="30" 
-            Margin="10,0"
-            Padding="8,0"
-            Background="#81C784"
-            Foreground="White"
-            BorderThickness="0"/>-->
+                <!-- 给父Grid添加行定义，明确区分按钮区和文件列表区 -->
+                <Grid Grid.Row="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <!-- 上传按钮行（固定高度） -->
+                        <RowDefinition Height="auto"/>
+                        <!-- 文件列表行（剩余空间） -->
+                    </Grid.RowDefinitions>
 
-                    <ui:Button 
-    Grid.Column="0"
-    Content="上传文档" 
-    Command="{Binding UploadFileCommand}"
-                        Foreground="White"
-    Icon="{ui:SymbolIcon Symbol =ArrowUpload24}" Height="30" 
-    Margin="10,0"
-    Padding="8,0"
-                        Appearance="Dark"
-    FontSize="14"
-    FontWeight="Normal"
-                        
-    Cursor="Hand"/>
+                    <!-- 标题栏（上传按钮）放在第0行 -->
+                    <Grid Grid.Row="0" Background="#F5F5F5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- 已上传数量提示 -->
-                    <TextBlock 
-            Grid.Column="1"
-            Text="{Binding UploadedFiles.Count, StringFormat='已上传 ({0})'}"  
-            VerticalAlignment="Center"
-            HorizontalAlignment="Right"
-            Margin="0,0,10,0"
-            Foreground="#666666"/>
+                        <ui:Button 
+Grid.Column="0"
+Content="上传文档" 
+Command="{Binding UploadFileCommand}"
+                    Foreground="White"
+Icon="{ui:SymbolIcon Symbol =ArrowUpload24}" Height="30" 
+Margin="10,0"
+Padding="8,0"
+                    Appearance="Dark"
+FontSize="14"
+FontWeight="Normal"
+                    
+Cursor="Hand"/>
+
+                        <!-- 已上传数量提示 -->
+                        <TextBlock 
+        Grid.Column="1"
+        Text="{Binding UploadedFiles.Count, StringFormat='已上传 ({0})'}"  
+        VerticalAlignment="Center"
+        HorizontalAlignment="Right"
+        Margin="0,0,10,0"
+        Foreground="#666666"/>
+                    </Grid>
+
+                    <ScrollViewer 
+    Grid.Row="1"  
+            Height="Auto" 
+    MaxHeight="120" 
+    VerticalScrollBarVisibility="Auto"
+    HorizontalScrollBarVisibility="Disabled">
+
+                        <ItemsControl ItemsSource="{Binding UploadedFiles}">
+                            <!-- ItemTemplate保持不变 -->
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type local:DocumentFile}">
+                                    <Grid Height="36" Margin="0,2">
+
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Style.Triggers>
+                                                    <!-- 用DataTrigger + 多值绑定 + 转换器，判断当前项是否等于SelectedFile -->
+                                                    <DataTrigger Value="True">
+                                                        <DataTrigger.Binding>
+                                                            <MultiBinding Converter="{StaticResource EqualsConverter}">
+                                                                <!-- 绑定1：当前DocumentFile项 -->
+                                                                <Binding/>
+                                                                <!-- 绑定2：ViewModel中的SelectedFile -->
+                                                                <Binding 
+                            RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
+                            Path="DataContext.SelectedFile"/>
+                                                            </MultiBinding>
+                                                        </DataTrigger.Binding>
+                                                        <!-- 选中时的样式：淡蓝色背景 -->
+
+                                                        <Setter Property="Background" Value="#E8F1FC"/>
+                                                        <!-- 文件名选中样式 -->
+
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand">
+                                            <!-- 通过 InputBinding 绑定鼠标事件与命令 -->
+                                            <StackPanel.InputBindings>
+                                                <!-- 鼠标按下事件绑定 -->
+                                                <MouseBinding 
+        MouseAction="LeftClick"  
+                                            Command="{Binding Path=DataContext.SelectFileCommand, 
+                          RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+        CommandParameter="{Binding}"/>
+
+                                            </StackPanel.InputBindings>
+
+                                            <TextBlock Text="📄 " FontSize="14"/>
+                                            <TextBlock 
+    Text="{Binding FileName}"  
+    Margin="2,0,5,0"
+    ToolTip="{Binding FilePath}"  
+    Foreground="#333333">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <!-- 默认文字样式 -->
+                                                        <Setter Property="Foreground" Value="#333333"/>
+                                                        <Setter Property="FontWeight" Value="Normal"/>
+
+                                                        <!-- 选中时的文字样式 -->
+                                                        <Style.Triggers>
+                                                            <DataTrigger Value="True">
+                                                                <DataTrigger.Binding>
+                                                                    <MultiBinding Converter="{StaticResource EqualsConverter}">
+                                                                        <!-- 绑定1：当前DocumentFile项 -->
+                                                                        <Binding/>
+                                                                        <!-- 绑定2：ViewModel中的SelectedFile -->
+                                                                        <Binding 
+                            RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
+                            Path="DataContext.SelectedFile"/>
+                                                                    </MultiBinding>
+                                                                </DataTrigger.Binding>
+                                                                <!-- 选中时的文字颜色+加粗 -->
+                                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                                                                <Setter Property="Background" Value="{DynamicResource AccentColorSecondaryBrush}"/>
+
+
+                                                                <!--<Setter Property="FontWeight" Value="Medium"/>-->
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+
+                                            </TextBlock>
+
+                                            <TextBlock 
+    Text="{Binding FileSizeKB, StringFormat='({0}KB)'}"  
+    FontSize="12"
+    Foreground="#999999"/>
+                                        </StackPanel>
+
+                                        <Button 
+                    Grid.Column="1"
+                    Content="×" 
+                    Width="24" 
+                    Height="24"
+                    Background="Transparent"
+                    Foreground="#FF5252"
+                    BorderThickness="0"
+                    Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                    CommandParameter="{Binding}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                        </ItemsControl>
+                    </ScrollViewer>
                 </Grid>
 
-                <ScrollViewer 
-        Grid.Row="1"  
-                Height="Auto" 
-        MaxHeight="120" 
-        VerticalScrollBarVisibility="Auto"
-        HorizontalScrollBarVisibility="Disabled">
-
-                    <ItemsControl ItemsSource="{Binding UploadedFiles}">
-                        <!-- ItemTemplate保持不变 -->
-
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate DataType="{x:Type local:DocumentFile}">
-                                <Grid Height="36" Margin="0,2">
-
-                                    <Grid.Style>
-                                        <Style TargetType="Grid">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Style.Triggers>
-                                                <!-- 用DataTrigger + 多值绑定 + 转换器，判断当前项是否等于SelectedFile -->
-                                                <DataTrigger Value="True">
-                                                    <DataTrigger.Binding>
-                                                        <MultiBinding Converter="{StaticResource EqualsConverter}">
-                                                            <!-- 绑定1：当前DocumentFile项 -->
-                                                            <Binding/>
-                                                            <!-- 绑定2：ViewModel中的SelectedFile -->
-                                                            <Binding 
-                                RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
-                                Path="DataContext.SelectedFile"/>
-                                                        </MultiBinding>
-                                                    </DataTrigger.Binding>
-                                                    <!-- 选中时的样式：淡蓝色背景 -->
-
-                                                    <Setter Property="Background" Value="#F5F0E6"/>
-                                                    <!-- 文件名选中样式 -->
-
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Grid.Style>
-
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand">
-                                        <!-- 通过 InputBinding 绑定鼠标事件与命令 -->
-                                        <StackPanel.InputBindings>
-                                            <!-- 鼠标按下事件绑定 -->
-                                            <MouseBinding 
-            MouseAction="LeftClick"  
-                                                Command="{Binding Path=DataContext.SelectFileCommand, 
-                              RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-            CommandParameter="{Binding}"/>
-
-                                        </StackPanel.InputBindings>
-
-                                        <TextBlock Text="📄 " FontSize="14"/>
-                                        <TextBlock 
-        Text="{Binding FileName}"  
-        Margin="2,0,5,0"
-        ToolTip="{Binding FilePath}"  
-        Foreground="#333333">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <!-- 默认文字样式 -->
-                                                    <Setter Property="Foreground" Value="#333333"/>
-                                                    <Setter Property="FontWeight" Value="Normal"/>
-
-                                                    <!-- 选中时的文字样式 -->
-                                                    <Style.Triggers>
-                                                        <DataTrigger Value="True">
-                                                            <DataTrigger.Binding>
-                                                                <MultiBinding Converter="{StaticResource EqualsConverter}">
-                                                                    <!-- 绑定1：当前DocumentFile项 -->
-                                                                    <Binding/>
-                                                                    <!-- 绑定2：ViewModel中的SelectedFile -->
-                                                                    <Binding 
-                                RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
-                                Path="DataContext.SelectedFile"/>
-                                                                </MultiBinding>
-                                                            </DataTrigger.Binding>
-                                                            <!-- 选中时的文字颜色+加粗 -->
-                                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
-
-                                                            <Setter Property="Background" Value="{DynamicResource AccentColorSecondaryBrush}"/>
-
-
-                                                            <!--<Setter Property="FontWeight" Value="Medium"/>-->
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-
-                                        </TextBlock>
-
-                                        <TextBlock 
-        Text="{Binding FileSizeKB, StringFormat='({0}KB)'}"  
-        FontSize="12"
-        Foreground="#999999"/>
-                                    </StackPanel>
-
-                                    <Button 
-                        Grid.Column="1"
-                        Content="×" 
-                        Width="24" 
-                        Height="24"
-                        Background="Transparent"
-                        Foreground="#FF5252"
-                        BorderThickness="0"
-                        Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                        CommandParameter="{Binding}"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-
-                    </ItemsControl>
-                </ScrollViewer>
-            </Grid>
+            </ui:Card>
 
             <!-- 聊天消息区域，带滚动条 -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
