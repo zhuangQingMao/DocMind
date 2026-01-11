@@ -148,7 +148,7 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- 上传按钮 -->
-                    <Button 
+                    <!--<Button 
             Grid.Column="0"
             Content="上传文件" 
             Command="{Binding UploadFileCommand}"
@@ -157,7 +157,21 @@
             Padding="8,0"
             Background="#81C784"
             Foreground="White"
-            BorderThickness="0"/>
+            BorderThickness="0"/>-->
+
+                    <ui:Button 
+    Grid.Column="0"
+    Content="上传文档" 
+    Command="{Binding UploadFileCommand}"
+                        Foreground="White"
+    Icon="{ui:SymbolIcon Symbol =ArrowUpload24}" Height="30" 
+    Margin="10,0"
+    Padding="8,0"
+                        Appearance="Dark"
+    FontSize="14"
+    FontWeight="Normal"
+                        
+    Cursor="Hand"/>
 
                     <!-- 已上传数量提示 -->
                     <TextBlock 
@@ -252,8 +266,12 @@
                                                                 </MultiBinding>
                                                             </DataTrigger.Binding>
                                                             <!-- 选中时的文字颜色+加粗 -->
-                                                            <Setter Property="Foreground" Value="Yellow"/>
-                                                            <Setter Property="FontWeight" Value="Medium"/>
+                                                            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+
+                                                            <Setter Property="Background" Value="{DynamicResource AccentColorSecondaryBrush}"/>
+
+
+                                                            <!--<Setter Property="FontWeight" Value="Medium"/>-->
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
