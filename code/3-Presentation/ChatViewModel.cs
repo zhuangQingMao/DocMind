@@ -38,6 +38,7 @@ namespace DocMind
         [ObservableProperty]
         private string _hint = "";
 
+        
         //Ctor
         public ChatViewModel(IRagCoreService ragCoreService, IDocumentLoaderService documentLoaderService)
         {
@@ -53,7 +54,7 @@ namespace DocMind
         {
             Messages.Add(new Message
             {
-                Text = "你好！我是基于GPT的助手，有什么我能帮你的吗？",
+                Text = "你好！我是您的文档智能助手，您可以上传文件并针对内容向我提问。",
                 IsSentByUser = false,
                 Timestamp = DateTime.Now
             });
