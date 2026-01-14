@@ -399,7 +399,9 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
 
             </ui:Card>
 
-            <ui:Card Grid.Row="2" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0 10 0 0">
+            <ui:Card Grid.Row="2" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0 10 0 0"
+                     Background="#F5F5FF" BorderBrush="#D6E4FF" BorderThickness="1" Padding="12,8"
+                     >
 
                 <Grid>
 
@@ -414,7 +416,7 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <ui:ProgressRing Width="14" Height="14" Margin="0,0,8,0" 
+                        <ui:ProgressRing Width="14" Height="14" Margin="10,0,0,0" 
                                  IsIndeterminate="True"
                                  Visibility="Visible"/>
                         <TextBlock Text="{Binding Hint}"
@@ -423,12 +425,25 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                            VerticalAlignment="Center"/>
                     </StackPanel>
 
-                    <ToggleButton Grid.Column="1"
-                                  HorizontalAlignment="Right"
-                        IsChecked="{Binding IsSourcingEnabled}" 
-ToolTip="开启后将验证答案来源，耗时稍长"
-      Content="启用溯源"/>
-                    
+                    <StackPanel Grid.Column="1" 
+            Orientation="Horizontal" 
+            HorizontalAlignment="Right" 
+            VerticalAlignment="Center">
+
+                        <TextBlock Text="溯源" 
+               FontSize="12" 
+               VerticalAlignment="Center" 
+               Margin="0,0,8,0" 
+               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+
+                        <ui:ToggleSwitch IsChecked="{Binding IsSourcingEnabled}" 
+                     ToolTip="开启后将验证答案来源，耗时稍长"
+                     OnContent="" 
+                     OffContent=""
+                     MinWidth="0"
+                     VerticalAlignment="Center"/>
+                    </StackPanel>
+
                     <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0"
                           
                           >
@@ -452,7 +467,8 @@ ToolTip="开启后将验证答案来源，耗时稍长"
                                 HorizontalAlignment="Right"
                                 Height="40"
                                 Width="80"
-                                   Appearance="Primary"
+                                   Appearance="Transparent"
+                                   Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
                                    Icon="{ui:SymbolIcon Symbol=Send24}"
 Content="发送" 
 Command="{Binding SendMessageCommand}"/>
