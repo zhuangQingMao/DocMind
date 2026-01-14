@@ -399,9 +399,15 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
 
             </ui:Card>
 
-            <ui:Card Grid.Row="2" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch">
+            <ui:Card Grid.Row="2" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0 10 0 0">
 
                 <Grid>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="5*"/>
                         <ColumnDefinition Width="*"/>
@@ -422,61 +428,42 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                         IsChecked="{Binding IsSourcingEnabled}" 
 ToolTip="开启后将验证答案来源，耗时稍长"
       Content="启用溯源"/>
+                    
+                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0"
+                          
+                          >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="7*" />
+                            <ColumnDefinition Width="*"/>
+
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="message"
+                Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" 
+                KeyDown="TextBox_KeyDown"
+                GotFocus="TextBox_GotFocus"
+                LostFocus="TextBox_LostFocus"
+                VerticalContentAlignment="Center"
+                BorderBrush="#DDDDDD"
+                BorderThickness="1"
+                Padding="10"/>
+
+                        <ui:Button Grid.Column="1" 
+                                HorizontalAlignment="Right"
+                                Height="40"
+                                Width="80"
+                                   Appearance="Primary"
+                                   Icon="{ui:SymbolIcon Symbol=Send24}"
+Content="发送" 
+Command="{Binding SendMessageCommand}"/>
+
+
+                    </Grid>
 
                 </Grid>
 
             </ui:Card>
             
-            <!-- 输入区域 -->
-            <Grid Grid.Row="3" Margin="0,10,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="87*" />
-                    <ColumnDefinition Width="308*"/>
-
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <TextBox x:Name="message"
-                    Grid.Column="0" 
-                     Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" 
-                     Margin="0,0,10,0"
-                     KeyDown="TextBox_KeyDown"
-                     GotFocus="TextBox_GotFocus"
-                     LostFocus="TextBox_LostFocus"
-                     Height="40"
-                     VerticalContentAlignment="Center"
-                     BorderBrush="#DDDDDD"
-                     BorderThickness="1"
-                     Padding="10" Grid.ColumnSpan="2"/>
-
-                <Button Grid.Column="2" 
-     Content="发送" 
-     Command="{Binding SendMessageCommand}"
-     Width="70"
-     Height="40"
-     Foreground="White">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border 
-                Background="#4A90E2" 
-                CornerRadius="6" 
-                                BorderThickness="0">
-                                <ContentPresenter 
-                    HorizontalAlignment="Center" 
-                    VerticalAlignment="Center"
-                    />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
-            </Grid>
         </Grid>
 
         <ui:Card
