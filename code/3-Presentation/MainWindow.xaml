@@ -12,10 +12,10 @@
         mc:Ignorable="d"
         Title="DocInsight" Height="1080" Width="1920"
         WindowStartupLocation="CenterScreen"
+    Background="#E1E8F0"
         WindowStyle="None"
         AllowsTransparency="False"
     ResizeMode="CanResize"
-    Background="#E9ECEF"
         >
 
     <WindowChrome.WindowChrome>
@@ -27,6 +27,7 @@
     </WindowChrome.WindowChrome>
 
     <ui:FluentWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <local:StringIsNotNullOrEmptyConverter x:Key="StringIsNotNullOrEmptyConverter"/>
         <local:BooleanToHorizontalAlignmentConverter x:Key="BooleanToHorizontalAlignmentConverter"/>
         <local:BooleanToBrushConverter x:Key="BooleanToBrushConverter"/>
@@ -36,6 +37,7 @@
             <local:FilePreviewTemplateSelector.TxtTemplate>
                 <DataTemplate>
                     <RichTextBox x:Name="OriginalTextBox"
+                                 Padding="32,25"
              VerticalScrollBarVisibility="Auto"
          IsReadOnly="True" 
          BorderThickness="0"                            
@@ -72,10 +74,24 @@
 
             <local:FilePreviewTemplateSelector.DefaultTemplate>
                 <DataTemplate>
-                    <TextBlock Text="请选择要预览的文件" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center"
-                               Foreground="#999999"/>
+                    <StackPanel HorizontalAlignment="Center" 
+                VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="DocumentSearch24" 
+                       FontSize="48" 
+                       Margin="0,0,0,12"
+                       Foreground="#CCCCCC"/>
+
+                        <TextBlock Text="请先选择要预览的文档" 
+                   FontSize="14"
+                   HorizontalAlignment="Center"
+                   Foreground="#999999"/>
+
+                        <TextBlock Text="点击左侧按钮进行上传" 
+                   FontSize="12"
+                   Margin="0,8,0,0"
+                   HorizontalAlignment="Center"
+                   Foreground="#BBBBBB"/>
+                    </StackPanel>
                 </DataTemplate>
             </local:FilePreviewTemplateSelector.DefaultTemplate>
         </local:FilePreviewTemplateSelector>
@@ -133,6 +149,7 @@
 
 
             <ui:Card Grid.Row="0" 
+                     BorderBrush="#E0E0E0" BorderThickness="2"
          Margin="0,0,0,10"
          Padding="0"
          Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
@@ -316,7 +333,7 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
             </ui:Card>
 
 
-            <ui:Card Grid.Row="1" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch">
+            <ui:Card Grid.Row="1" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="#E0E0E0" BorderThickness="2">
 
 
                 <ScrollViewer  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Stretch"
@@ -345,8 +362,8 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                                                     <!-- 用户消息样式（DataTrigger触发） -->
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsSentByUser}" Value="True">
-                                                            <Setter Property="Background" Value="#4A90E2"/>
-                                                            <Setter Property="BorderBrush" Value="#3A80D2"/>
+                                                            <Setter Property="Background" Value="#5dade2"/>
+                                                            <Setter Property="BorderBrush" Value="#5dade2"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -400,7 +417,7 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
             </ui:Card>
 
             <ui:Card Grid.Row="2" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0 10 0 0"
-                     Background="#F5F5FF" BorderBrush="#D6E4FF" BorderThickness="1" Padding="12,8"
+                     Background="#F5F5FF" BorderBrush="#D6E4FF" BorderThickness="2" Padding="12,8"
                      >
 
                 <Grid>
@@ -418,8 +435,9 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                         <ui:ProgressRing Width="14" Height="14" Margin="10,0,0,0" 
                                  IsIndeterminate="True"
-                                 Visibility="Visible"/>
+                                 Visibility="{Binding IsRingVisible, Converter={StaticResource BoolToVis}}"/>
                         <TextBlock Text="{Binding Hint}"
+                                   Margin="10 0 0 0"
                            FontSize="12" 
                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                            VerticalAlignment="Center"/>
@@ -485,31 +503,42 @@ Command="{Binding SendMessageCommand}"/>
         <ui:Card
             VerticalAlignment="Stretch"
             VerticalContentAlignment="Stretch"
+            BorderBrush="#E0E0E0" BorderThickness="2"
+            Margin="0 10 10 10"
     Grid.Column="1"
-            Grid.Row="1"
-    Margin="10"
-    Padding="12">
+            Grid.Row="1">
 
             <Grid Background="#FAFAFA" VerticalAlignment="Stretch">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <!-- 标题行 -->
                 <Grid Grid.Row="0" Background="#F5F5F5">
-                    <TextBlock
-                Text="{Binding SelectedFile.FileName, FallbackValue='文件预览'}"
-                Margin="10,0"
-                VerticalAlignment="Center"
-                FontWeight="Medium"/>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        
+                        <ui:SymbolIcon Symbol="Document24" Margin="10,0,8,1" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"/>
+
+                        <TextBlock
+Text="{Binding SelectedFile.FileName, FallbackValue='文档预览'}"
+VerticalAlignment="Center"
+FontWeight="Medium"/>
+
+                    </StackPanel>
+
+                    
                 </Grid>
 
+                <Separator Grid.Row="1"  />
+                
                 <!-- 内容行 -->
                 <ContentControl
                     VerticalContentAlignment="Stretch"
                     VerticalAlignment="Stretch"
-            Grid.Row="1"
+            Grid.Row="2"
             x:Name="previewContentControl"
             Content="{Binding SelectedFile}"
             ContentTemplateSelector="{StaticResource FilePreviewTemplateSelector}"/>

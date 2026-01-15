@@ -30,7 +30,12 @@ namespace DocMind
                 {
                     firstHighlightPosition ??= startPos;
 
-                    new TextRange(startPos, endPos).ApplyPropertyValue(TextElement.BackgroundProperty, Brushes.Yellow);
+                    var bc = new BrushConverter();
+
+                    var brush = (Brush?)bc.ConvertFromString("#D6E4FF");
+
+                    if (brush != null)
+                        new TextRange(startPos, endPos).ApplyPropertyValue(TextElement.BackgroundProperty, brush);
                 }
             }
 

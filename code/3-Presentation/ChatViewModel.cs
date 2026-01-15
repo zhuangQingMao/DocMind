@@ -38,7 +38,9 @@ namespace DocMind
         [ObservableProperty]
         private string _hint = "";
 
-        
+        [ObservableProperty]
+        private bool _isRingVisible = false;
+
         //Ctor
         public ChatViewModel(IRagCoreService ragCoreService, IDocumentLoaderService documentLoaderService)
         {
@@ -63,8 +65,16 @@ namespace DocMind
         private static async Task OnUIAsync(Delegate method)
             => await Application.Current.Dispatcher.BeginInvoke(method);
 
-        private async Task ShowHint(string hint)
-            => await OnUIAsync(() => Hint = hint);
+        private async Task ShowHint(string hint, bool needRing = true)
+        {
+            await OnUIAsync(() =>
+            {
+                Hint = hint;
+
+                if (needRing && !string.IsNullOrWhiteSpace(hint))
+                    IsRingVisible = true;
+            });
+        }
 
         private async Task SendUserMessage(string str)
         {
@@ -125,7 +135,7 @@ namespace DocMind
 
                 if (UploadedFiles.Any(a => a.FilePath == path))
                 {
-                    MessageBox.Show($"文件已上传：{Path.GetFileName(path)}", "提示");
+                    await ShowHint($"文件已上传：{Path.GetFileName(path)}", false);
                     return;
                 }
 
@@ -133,7 +143,7 @@ namespace DocMind
 
                 await _ragCoreService.ImportDocumentAsync(Path.GetFileName(path), docFile.FileMeta);
 
-                await SendSysMessage($"已成功导入文件：{docFile.FileName}({Path.GetExtension(path).ToUpper()})");
+                await ShowHint($"已成功导入文件：{docFile.FileName}({Path.GetExtension(path).ToUpper()})", false);
 
                 await OnUIAsync(() =>
                 {
@@ -152,17 +162,13 @@ namespace DocMind
         }
 
         [RelayCommand]
-        private void RemoveFile(DocumentFile file)
+        private async Task RemoveFile(DocumentFile file)
         {
             if (file != null)
             {
                 UploadedFiles.Remove(file);
-                Messages.Add(new Message
-                {
-                    Text = $"已移除文件：{file.FileName}",
-                    IsSentByUser = false,
-                    Timestamp = DateTime.Now
-                });
+
+                await ShowHint($"已移除文件：{file.FileName}", false);
 
                 if (SelectedFile != null && file.FilePath == SelectedFile.FilePath)
                     SelectedFile = null;
@@ -277,6 +283,7 @@ namespace DocMind
                 {
                     UserQuestion = "";
                     IsTraking = false;
+                    IsRingVisible = false;
                 });
             }
         }
