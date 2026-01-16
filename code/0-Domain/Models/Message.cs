@@ -15,5 +15,8 @@ namespace DocMind
 
         [ObservableProperty]
         private bool _isStreamingFinished;
+
+        [ObservableProperty]
+        private bool _isTxtTrackingFinished;
     }
 }

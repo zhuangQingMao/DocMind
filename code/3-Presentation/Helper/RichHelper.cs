@@ -13,6 +13,8 @@ namespace DocMind
             if (richTextBox == null)
                 return;
 
+            ClearAllHighlights(richTextBox);
+
             var fullText = GetFullRenderedText(richTextBox.Document);
             var scrollViewer = FindVisualChild<ScrollViewer>(richTextBox);
             TextPointer? firstHighlightPosition = null;
