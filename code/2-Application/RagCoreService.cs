@@ -119,11 +119,9 @@
 ## 输入数据：
 ### 最终答案：
 {firstAnswer}
-
 ### CONTEXT START ###
 {context}
 ### CONTEXT END ###";
-
 
             return await lLMChatService.ChatAsync(userPrompt, systemPrompt);
         }

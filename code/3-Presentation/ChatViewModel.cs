@@ -212,6 +212,8 @@ namespace DocMind
 
                 await SendUserMessage(userQuestion);
 
+                await OnUIAsync(() => UserQuestion = "");
+
                 if (SelectedFile == null)
                 {
                     await SendSysMessage("请先选择文档");
@@ -298,7 +300,6 @@ namespace DocMind
                 await ShowHint("");
                 await OnUIAsync(() =>
                 {
-                    UserQuestion = "";
                     IsTraking = false;
                     IsRingVisible = false;
                 });
