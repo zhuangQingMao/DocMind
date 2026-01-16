@@ -61,7 +61,12 @@ namespace DocMind
 
         public void Receive(JumpParagraphMessage message)
         {
-            MessageBox.Show(message.Sentence);
+            var textTextBox = FindTextBoxInTemplate(previewContentControl);
+            if (textTextBox == null)
+                return;
+
+            if (!string.IsNullOrWhiteSpace(message.Sentence))
+                RichTextBoxHighlighter.HighlightByTextContent(textTextBox, [message.Sentence], true);
         }
 
         #endregion

@@ -8,16 +8,23 @@ namespace DocMind
 {
     public static class RichTextBoxHighlighter
     {
-        public static void HighlightByTextContent(RichTextBox richTextBox, List<string> spans)
+        private static TextPointer? _start;
+        private static TextPointer? _end;
+        private static string _defaultHighLightColor = "#D6E4FF";
+
+        public static void HighlightByTextContent(RichTextBox richTextBox, List<string> spans, bool isSingleSencente = false)
         {
             if (richTextBox == null)
                 return;
 
-            ClearAllHighlights(richTextBox);
+            if (!isSingleSencente)
+                ClearAllHighlights(richTextBox);
 
             var fullText = GetFullRenderedText(richTextBox.Document);
             var scrollViewer = FindVisualChild<ScrollViewer>(richTextBox);
             TextPointer? firstHighlightPosition = null;
+
+            string colorCode = isSingleSencente ? "#FFFF00" : _defaultHighLightColor;
 
             foreach (var targetText in spans)
             {
@@ -34,10 +41,19 @@ namespace DocMind
 
                     var bc = new BrushConverter();
 
-                    var brush = (Brush?)bc.ConvertFromString("#D6E4FF");
+                    var brush = (Brush?)bc.ConvertFromString(colorCode);
 
                     if (brush != null)
                         new TextRange(startPos, endPos).ApplyPropertyValue(TextElement.BackgroundProperty, brush);
+
+                    if (isSingleSencente)
+                    {
+                        if (_start != null && _end != null)
+                            ClearHighlight(richTextBox, _start, _end);
+
+                        _start = startPos;
+                        _end = endPos;
+                    }
                 }
             }
 
@@ -135,6 +151,21 @@ namespace DocMind
             var fullRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
 
             fullRange.ApplyPropertyValue(TextElement.BackgroundProperty, Brushes.Transparent);
+        }
+
+        public static void ClearHighlight(RichTextBox richTextBox, TextPointer start, TextPointer end)
+        {
+            if (richTextBox == null)
+                return;
+
+            var range = new TextRange(start, end);
+
+            var bc = new BrushConverter();
+
+            var brush = (Brush?)bc.ConvertFromString(_defaultHighLightColor);
+
+            if (brush != null)
+                range.ApplyPropertyValue(TextElement.BackgroundProperty, brush);
         }
     }
 }
