@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using TextBlock = System.Windows.Controls.TextBlock;
 
 namespace DocMind
 {
@@ -22,6 +22,18 @@ namespace DocMind
         {
             get => (ICommand)GetValue(JumpToPageCommandProperty);
             set => SetValue(JumpToPageCommandProperty, value);
+        }
+
+        private static readonly DependencyProperty JumpToParagraphCommandProperty =
+            DependencyProperty.Register(
+                nameof(JumpToParagraphCommand),
+                typeof(ICommand),
+                typeof(RichTextHyperlinkBehavior));
+
+        public ICommand JumpToParagraphCommand
+        {
+            get => (ICommand)GetValue(JumpToParagraphCommandProperty);
+            set => SetValue(JumpToParagraphCommandProperty, value);
         }
 
         protected override void OnAttached()
@@ -43,6 +55,9 @@ namespace DocMind
 
         private void OnMessagePropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (AssociatedObject == null)
+                return;
+
             if (e.PropertyName == nameof(Message.IsStreamingFinished))
             {
                 if (AssociatedObject != null && AssociatedObject.Dispatcher != null && sender is Message message && message.IsStreamingFinished)
@@ -50,6 +65,16 @@ namespace DocMind
                     ((INotifyPropertyChanged)message).PropertyChanged -= OnMessagePropertyChanged;
 
                     AssociatedObject.Dispatcher.Invoke(() => RenderFinalContent(message));
+                }
+            }
+
+            if (e.PropertyName == nameof(Message.IsTxtTrackingFinished))
+            {
+                if (AssociatedObject != null && AssociatedObject.Dispatcher != null && sender is Message message && message.IsTxtTrackingFinished)
+                {
+                    ((INotifyPropertyChanged)message).PropertyChanged -= OnMessagePropertyChanged;
+
+                    AssociatedObject.Dispatcher.Invoke(() => RenderCitation(message));
                 }
             }
         }
@@ -64,11 +89,46 @@ namespace DocMind
             base.OnDetaching();
         }
 
-        private void RenderFinalContent(Message message)
+        private void RenderCitation(Message message)
         {
-            if (AssociatedObject == null)
+            if (JumpToParagraphCommand == null)
                 return;
 
+            if (message != null && message.Sentences != null && message.Sentences.Count != 0)
+            {
+                int no = 1;
+
+                AssociatedObject.Inlines.Add(new LineBreak());
+                AssociatedObject.Inlines.Add(new LineBreak());
+                AssociatedObject.Inlines.Add("引用：");
+
+                foreach (var sentence in message.Sentences)
+                {
+                    var link = new Hyperlink
+                    {
+                        ToolTip = $"转到引用：{no}"
+                    };
+
+                    var currentSentence = sentence;
+
+                    link.Click += (s, e) =>
+                    {
+                        if (JumpToParagraphCommand != null && JumpToParagraphCommand.CanExecute(currentSentence))
+                        {
+                            JumpToParagraphCommand.Execute(currentSentence);
+                        }
+                    };
+
+                    link.Inlines.Add(new Run($"[{no}]"));
+                    AssociatedObject.Inlines.Add(link);
+
+                    no++;
+                }
+            }
+        }
+
+        private void RenderFinalContent(Message message)
+        {
             AssociatedObject.Inlines.Clear();
 
             var response = message.Text;

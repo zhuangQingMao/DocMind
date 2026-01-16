@@ -191,6 +191,15 @@ namespace DocMind
         }
 
         [RelayCommand]
+        private void JumpToParagraph(object parameter)
+        {
+            if (parameter is string sentence)
+            {
+                _messenger.Send(new JumpParagraphMessage() { Sentence = sentence });
+            }
+        }
+
+        [RelayCommand]
         private async Task SendMessageAsync()
         {
             try
@@ -268,6 +277,14 @@ namespace DocMind
                             .ToList();
 
                         _messenger.Send(new HighlightMessage(sentences));
+
+                        if (SelectedFile.FileType == FileType.Txt)
+                            await OnUIAsync(() =>
+                            {
+                                aiMessage.Sentences = sentences;
+                                aiMessage.IsTxtTrackingFinished = true;
+                            });
+
                     }
                 }
 

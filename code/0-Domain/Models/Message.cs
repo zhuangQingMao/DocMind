@@ -18,5 +18,8 @@ namespace DocMind
 
         [ObservableProperty]
         private bool _isTxtTrackingFinished;
+
+        [ObservableProperty]
+        private List<string>? _sentences;
     }
 }
