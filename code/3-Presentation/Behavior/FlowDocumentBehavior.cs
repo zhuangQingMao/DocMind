@@ -26,6 +26,12 @@ namespace DocMind
             {
                 if (behavior.AssociatedObject != null && e.NewValue is FlowDocument newDocument)
                 {
+                    var currentParent = LogicalTreeHelper.GetParent(newDocument);
+                    if (currentParent != null && currentParent is RichTextBox oldRichTextBox)
+                    {
+                        oldRichTextBox.Document = new FlowDocument();
+                    }
+
                     behavior.AssociatedObject.Document = newDocument;
                 }
             }
@@ -37,6 +43,13 @@ namespace DocMind
 
             if (BoundDocument != null)
             {
+                var currentParent = LogicalTreeHelper.GetParent(BoundDocument);
+
+                if (currentParent is RichTextBox oldRichTextBox)
+                {
+                    oldRichTextBox.Document = new FlowDocument();
+                }
+
                 AssociatedObject.Document = BoundDocument;
             }
         }
