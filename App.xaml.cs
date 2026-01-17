@@ -6,7 +6,7 @@ namespace DocMind
 {
     public partial class App : Application
     {
-        public required IServiceProvider ServiceProvider { get; set; }
+        public IServiceProvider ServiceProvider { get; set; }
 
         protected override async void OnStartup(StartupEventArgs e)
         {

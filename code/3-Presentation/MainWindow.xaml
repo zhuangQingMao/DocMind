@@ -130,14 +130,36 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="18"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Border Grid.Row="0"
-                Grid.Column="0" Grid.ColumnSpan="2"
-            Background="Transparent"
-            MouseLeftButtonDown="OnDragWindow"/>
+        Grid.Column="0" 
+        Grid.ColumnSpan="2"
+        Background="Transparent"
+        MouseLeftButtonDown="OnDragWindow">
+
+            <Grid>
+                <StackPanel Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Center">
+
+                    <ui:Button 
+                        Margin="0 5 10 0"
+                        Height="30"
+                        Width="30"
+                        Icon="{ui:SymbolIcon Symbol=Dismiss24}"
+                               Background="#2B2B2B"
+                        Foreground="#E6E6E6"
+                        
+                       Click="OnCloseApp"
+                       ToolTip="关闭" >
+
+                    </ui:Button>
+                </StackPanel>
+            </Grid>
+        </Border>
 
         <Grid  Grid.Row="1" Grid.Column="0" Margin="10">
             <Grid.RowDefinitions>

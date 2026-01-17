@@ -10,9 +10,6 @@ using RichTextBox = System.Windows.Controls.RichTextBox;
 
 namespace DocMind
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : FluentWindow, IRecipient<HighlightMessage>, IRecipient<JumpPageMessage>, IRecipient<JumpParagraphMessage>
     {
         public MainWindow(ChatViewModel viewModel)
@@ -98,9 +95,9 @@ namespace DocMind
 
         #endregion
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        private void OnCloseApp(object sender, RoutedEventArgs e)
         {
-            base.OnClosing(e);
+            Application.Current.Shutdown();
         }
 
         // 按Enter发送消息
