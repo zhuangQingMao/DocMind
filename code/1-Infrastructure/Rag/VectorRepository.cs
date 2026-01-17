@@ -36,7 +36,7 @@ namespace DocMind
             var command = connection.CreateCommand();
             command.CommandText = $@"
                 CREATE TABLE IF NOT EXISTS {TableName} (
-                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Id TEXT NOT NULL,
                     FileName TEXT NOT NULL,
                     ChunkIndex INT NOT NULL,
                     OriginalText TEXT NOT NULL,
@@ -56,16 +56,29 @@ namespace DocMind
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task SaveVectorAsync(string fileName, int chunkIndex, string text, float[] vector)
+        public async Task ClearDocAsync(string id)
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var command = connection.CreateCommand();
+            command.CommandText = $"DELETE FROM {TableName} where id = @id;";
+            command.Parameters.AddWithValue("@id", id);
+
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task SaveVectorAsync(string id, string fileName, int chunkIndex, string text, float[] vector)
         {
             var vectorBytes = FloatArrayToByteArray(vector);
             using var connection = new SqliteConnection(_connectionString);
             await connection.OpenAsync();
 
             var command = connection.CreateCommand();
-            command.CommandText = $@"INSERT INTO {TableName} (FileName, ChunkIndex, OriginalText, Vector) 
-                                     VALUES (@fileName, @chunkIndex, @text, @vector);";
+            command.CommandText = $@"INSERT INTO {TableName} (ID, FileName, ChunkIndex, OriginalText, Vector) 
+                                     VALUES (@id, @fileName, @chunkIndex, @text, @vector);";
 
+            command.Parameters.AddWithValue("@id", id);
             command.Parameters.AddWithValue("@fileName", fileName);
             command.Parameters.AddWithValue("@chunkIndex", chunkIndex);
             command.Parameters.AddWithValue("@text", text);

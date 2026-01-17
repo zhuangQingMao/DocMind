@@ -30,17 +30,20 @@
             }
         };
 
-        public async Task ImportDocumentAsync(string fileName, object fileMeta)
+        public async Task ImportDocumentAsync(string fileName, DocumentFile docFile)
         {
-            var chunks = documentChunker.ChunkAndGenerateMetadata(fileName, fileMeta);
+            var chunks = documentChunker.ChunkAndGenerateMetadata(fileName, docFile.FileMeta);
 
             foreach (var chunk in chunks)
             {
                 var vector = await embeddingService.GetVectorAsync(chunk.Text);
 
-                await repository.SaveVectorAsync(fileName, chunk.ChunkIndex, chunk.Text, vector);
+                await repository.SaveVectorAsync(docFile.Id, fileName, chunk.ChunkIndex, chunk.Text, vector);
             }
         }
+
+        public async Task ClearDocAsync(string id)
+            => await repository.ClearDocAsync(id);
 
         public async Task<string> GetOriginContext(string userQuestion, FileType type)
         {

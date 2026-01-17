@@ -25,5 +25,7 @@ namespace DocMind
         public required object FileMeta { get; set; }
 
         public required FileType FileType { get; set; }
+
+        public required string Id { get; set; }
     }
 }

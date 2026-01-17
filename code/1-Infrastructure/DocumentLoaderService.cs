@@ -28,7 +28,8 @@ namespace DocMind
 
             return new DocumentFile
             {
-                FileSizeKB = Math.Round((double)fileInfo.Length / 1024,2),
+                Id = Guid.NewGuid().ToString(),
+                FileSizeKB = Math.Round((double)fileInfo.Length / 1024, 2),
                 FileName = fileInfo.Name,
                 FilePath = path,
                 FileSize = fileInfo.Length,

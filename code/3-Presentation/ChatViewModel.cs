@@ -81,7 +81,7 @@ namespace DocMind
 
         private async Task StartLoading(string message = "")
         {
-            await OnUIAsync(() => 
+            await OnUIAsync(() =>
             {
                 LoadMessage = message;
                 if (string.IsNullOrWhiteSpace(LoadMessage))
@@ -165,7 +165,7 @@ namespace DocMind
 
                 var docFile = await _documentLoaderService.LoadFromFileAsync(path);
 
-                await _ragCoreService.ImportDocumentAsync(Path.GetFileName(path), docFile.FileMeta);
+                await _ragCoreService.ImportDocumentAsync(Path.GetFileName(path), docFile);
 
                 await ShowHint($"已成功导入文件：{docFile.FileName}({Path.GetExtension(path).ToUpper()})", false);
 
@@ -190,12 +190,27 @@ namespace DocMind
         {
             if (file != null)
             {
-                UploadedFiles.Remove(file);
+                try
+                {
+                    await StartLoading("移除文档");
 
-                await ShowHint($"已移除文件：{file.FileName}", false);
+                    await _ragCoreService.ClearDocAsync(file.Id);
 
-                if (SelectedFile != null && file.FilePath == SelectedFile.FilePath)
-                    SelectedFile = null;
+                    UploadedFiles.Remove(file);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                }
+                finally
+                {
+                    await EndLoading();
+
+                    await ShowHint($"已移除文件：{file.FileName}", false);
+
+                    if (SelectedFile != null && file.FilePath == SelectedFile.FilePath)
+                        SelectedFile = null;
+                }
             }
         }
 
