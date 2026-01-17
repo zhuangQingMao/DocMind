@@ -45,10 +45,10 @@
         public async Task ClearDocAsync(string id)
             => await repository.ClearDocAsync(id);
 
-        public async Task<string> GetOriginContext(string userQuestion, FileType type)
+        public async Task<string> GetOriginContext(string userQuestion, FileType type, string fileId)
         {
             var queryVector = await embeddingService.GetVectorAsync(userQuestion);
-            var relevantText = await repository.FindRelevantChunks(queryVector, 10);
+            var relevantText = await repository.FindRelevantChunks(fileId, queryVector, 10);
 
             return SpliceContext(relevantText, type);
         }

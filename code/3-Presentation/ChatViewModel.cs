@@ -270,7 +270,7 @@ namespace DocMind
 
                 await ShowHint("正在生成回复");
 
-                var context = await _ragCoreService.GetOriginContext(userQuestion, SelectedFile.FileType);
+                var context = await _ragCoreService.GetOriginContext(userQuestion, SelectedFile.FileType, SelectedFile.Id);
 
                 if (string.IsNullOrWhiteSpace(context))
                 {

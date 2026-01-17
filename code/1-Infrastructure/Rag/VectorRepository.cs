@@ -87,15 +87,17 @@ namespace DocMind
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<List<ChunkSortResult>> FindRelevantChunks(float[] queryVector, int topK)
+        public async Task<List<ChunkSortResult>> FindRelevantChunks(string fileId, float[] queryVector, int topK)
         {
             var allRecords = new List<ChunkRecord>();
 
             using (var connection = new SqliteConnection(_connectionString))
             {
                 await connection.OpenAsync();
+
                 var command = connection.CreateCommand();
-                command.CommandText = $"SELECT OriginalText, Vector,ChunkIndex FROM {TableName};";
+                command.CommandText = $"SELECT OriginalText, Vector,ChunkIndex FROM {TableName} where id = @id;";
+                command.Parameters.AddWithValue("@id", fileId);
 
                 using var reader = await command.ExecuteReaderAsync();
 
