@@ -549,27 +549,22 @@ FontWeight="Medium"/>
 
         <Grid 
             Grid.ColumnSpan="2"
-            Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
-            Background="#80000000"  
-            ZIndex="9999">
+            Grid.RowSpan="2"
+            x:Name="GlobalLoadingOverlay"
+      Background="#40000000" 
+      Panel.ZIndex="999"
+      Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
 
-            <StackPanel 
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Center"
-                Orientation="Vertical"
-                Margin="20">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ui:ProgressRing IsIndeterminate="True" 
+                         Width="60" 
+                         Height="60"
+                         Foreground="DarkGray"/>
 
-                <ProgressBar 
-                    Width="200" 
-                    Height="8" 
-                    IsIndeterminate="True"  
-                    Foreground="White"/>
-
-                <TextBlock 
-                    Text="处理中，请稍候..." 
-                    Margin="0,10,0,0" 
-                    Foreground="White" 
-                    FontSize="14"/>
+                <ui:TextBlock Text="{Binding LoadMessage, FallbackValue='Loading...'}"
+                      Margin="0,10,0,0"
+                      FontWeight="Medium"
+                      Foreground="White"/>
             </StackPanel>
         </Grid>
 

@@ -27,6 +27,9 @@ namespace DocMind
         private bool _isLoading = false;
 
         [ObservableProperty]
+        private string _loadMessage = "";
+
+        [ObservableProperty]
         private bool _isTraking = false;
 
         [ObservableProperty]
@@ -76,6 +79,27 @@ namespace DocMind
             });
         }
 
+        private async Task StartLoading(string message = "")
+        {
+            await OnUIAsync(() => 
+            {
+                LoadMessage = message;
+                if (string.IsNullOrWhiteSpace(LoadMessage))
+                    LoadMessage = "Loading";
+
+                IsLoading = true;
+            });
+        }
+
+        private async Task EndLoading()
+        {
+            await OnUIAsync(() =>
+            {
+                IsLoading = false;
+                LoadMessage = "";
+            });
+        }
+
         private async Task SendUserMessage(string str)
         {
             await OnUIAsync(() =>
@@ -111,7 +135,7 @@ namespace DocMind
         {
             try
             {
-                await OnUIAsync(() => IsLoading = true);
+                await StartLoading("正在导入文档");
 
                 string? path = null;
 
@@ -157,7 +181,7 @@ namespace DocMind
             }
             finally
             {
-                await OnUIAsync(() => IsLoading = false);
+                await EndLoading();
             }
         }
 
