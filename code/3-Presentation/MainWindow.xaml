@@ -499,45 +499,34 @@
             <Grid VerticalAlignment="Stretch" Background="#FAFAFA">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40" />
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!--  标题行  -->
                 <Grid Grid.Row="0" Background="#F5F5F5">
 
                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-
                         <ui:SymbolIcon
-                            Margin="10,0,8,1"
+                            Margin="10,0,0,0"
                             Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
                             Symbol="Document24" />
 
                         <TextBlock
+                            Margin="6,0,0,0"
                             VerticalAlignment="Center"
                             FontWeight="Medium"
                             Text="{Binding SelectedFile.FileName, FallbackValue='文档预览'}" />
-
                     </StackPanel>
-
-
                 </Grid>
 
-                <Separator Grid.Row="1" />
-
-                <!--  内容行  -->
                 <ContentControl
                     x:Name="previewContentControl"
-                    Grid.Row="2"
+                    Grid.Row="1"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Stretch"
                     Content="{Binding SelectedFile}"
                     ContentTemplateSelector="{StaticResource FilePreviewTemplateSelector}" />
             </Grid>
-
         </ui:Card>
-
-
 
         <Grid
             x:Name="GlobalLoadingOverlay"
@@ -561,8 +550,5 @@
                     Text="{Binding LoadMessage, FallbackValue='Loading...'}" />
             </StackPanel>
         </Grid>
-
     </Grid>
-
-
 </ui:FluentWindow>
