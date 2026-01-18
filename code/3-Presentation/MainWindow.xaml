@@ -107,6 +107,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!--  标题栏  -->
         <Border
             Grid.Row="0"
             Grid.Column="0"
@@ -147,6 +148,7 @@
             </Grid>
         </Border>
 
+        <!--  左侧聊天区  -->
         <Grid
             Grid.Row="1"
             Grid.Column="0"
@@ -157,6 +159,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
+            <!--  上传文件  -->
             <ui:Card
                 Grid.Row="0"
                 Padding="0"
@@ -329,6 +332,7 @@
                 </Grid>
             </ui:Card>
 
+            <!--  信息内容  -->
             <ui:Card
                 Grid.Row="1"
                 Margin="0,10,0,0"
@@ -359,6 +363,7 @@
                                             </Border.Style>
 
                                             <StackPanel>
+                                                <!--  消息内容  -->
                                                 <TextBlock
                                                     MinHeight="20"
                                                     Margin="4"
@@ -374,6 +379,7 @@
 
                                                 </TextBlock>
 
+                                                <!--  时间戳  -->
                                                 <TextBlock
                                                     Margin="0,4,6,6"
                                                     HorizontalAlignment="Right"
@@ -400,6 +406,7 @@
                 </ScrollViewer>
             </ui:Card>
 
+            <!--  聊天操作  -->
             <ui:Card
                 Grid.Row="2"
                 Margin="0,10,0,0"
@@ -419,6 +426,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
+                    <!--  当前提示  -->
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="0"
@@ -438,6 +446,7 @@
                             Text="{Binding Hint}" />
                     </StackPanel>
 
+                    <!--  溯源  -->
                     <StackPanel
                         Grid.Row="0"
                         Grid.Column="1"
@@ -458,6 +467,7 @@
                             ToolTip="开启后将验证答案来源，耗时稍长" />
                     </StackPanel>
 
+                    <!--  聊天框+按钮  -->
                     <TextBox
                         x:Name="message"
                         Grid.Row="1"
@@ -487,6 +497,7 @@
             </ui:Card>
         </Grid>
 
+        <!--  右侧文件区  -->
         <ui:Card
             Grid.Row="1"
             Grid.Column="1"
@@ -502,6 +513,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
+                <!--  文件预览标题  -->
                 <Grid Grid.Row="0" Background="#F5F5F5">
 
                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
@@ -518,6 +530,7 @@
                     </StackPanel>
                 </Grid>
 
+                <!--  文件内容  -->
                 <ContentControl
                     x:Name="previewContentControl"
                     Grid.Row="1"
@@ -528,6 +541,7 @@
             </Grid>
         </ui:Card>
 
+        <!--  loading层  -->
         <Grid
             x:Name="GlobalLoadingOverlay"
             Grid.RowSpan="2"
