@@ -409,7 +409,6 @@
                 BorderThickness="1">
 
                 <Grid>
-
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
@@ -421,6 +420,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel
+                        Grid.Row="0"
                         Grid.Column="0"
                         VerticalAlignment="Center"
                         Orientation="Horizontal">
@@ -439,64 +439,52 @@
                     </StackPanel>
 
                     <StackPanel
+                        Grid.Row="0"
                         Grid.Column="1"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Orientation="Horizontal">
 
                         <TextBlock
-                            Margin="0,0,8,0"
                             VerticalAlignment="Center"
                             FontSize="12"
                             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
                             Text="溯源" />
 
                         <ui:ToggleSwitch
-                            MinWidth="0"
+                            Margin="10,0,5,0"
                             VerticalAlignment="Center"
                             IsChecked="{Binding IsSourcingEnabled}"
-                            OffContent=""
-                            OnContent=""
                             ToolTip="开启后将验证答案来源，耗时稍长" />
                     </StackPanel>
 
-                    <Grid
+                    <TextBox
+                        x:Name="message"
                         Grid.Row="1"
-                        Grid.ColumnSpan="2"
-                        Margin="0,10,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="7*" />
-                            <ColumnDefinition Width="*" />
+                        Grid.Column="0"
+                        Height="40"
+                        Margin="0,10,0,0"
+                        Padding="10"
+                        VerticalContentAlignment="Center"
+                        BorderBrush="DarkGray"
+                        BorderThickness="1"
+                        KeyDown="TextBox_KeyDown"
+                        Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" />
 
-                        </Grid.ColumnDefinitions>
-
-                        <TextBox
-                            x:Name="message"
-                            Padding="10"
-                            VerticalContentAlignment="Center"
-                            BorderBrush="#DDDDDD"
-                            BorderThickness="1"
-                            KeyDown="TextBox_KeyDown"
-                            Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" />
-
-                        <ui:Button
-                            Grid.Column="1"
-                            Width="80"
-                            Height="40"
-                            HorizontalAlignment="Right"
-                            Appearance="Transparent"
-                            Command="{Binding SendMessageCommand}"
-                            Content="发送"
-                            Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
-                            Icon="{ui:SymbolIcon Symbol=Send24}" />
-
-
-                    </Grid>
-
+                    <ui:Button
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="80"
+                        Height="40"
+                        Margin="0,10,0,0"
+                        HorizontalAlignment="Right"
+                        Appearance="Transparent"
+                        Command="{Binding SendMessageCommand}"
+                        Content="发送"
+                        Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                        Icon="{ui:SymbolIcon Symbol=Send24}" />
                 </Grid>
-
             </ui:Card>
-
         </Grid>
 
         <ui:Card
