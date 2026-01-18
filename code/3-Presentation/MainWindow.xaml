@@ -1,49 +1,46 @@
-﻿<ui:FluentWindow x:Class="DocMind.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:behaviors="clr-namespace:DocMind"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        xmlns:local="clr-namespace:DocMind"
-        mc:Ignorable="d"
-        Height="1080" Width="1920"
-        WindowStartupLocation="CenterScreen"
-        Background="#E1E8F0"
-        WindowStyle="None"
-        AllowsTransparency="False"
-        ResizeMode="NoResize">
-
-    <WindowChrome.WindowChrome>
-        <WindowChrome
-            CaptionHeight="0"
-            ResizeBorderThickness="6"
-            GlassFrameThickness="0"
-            UseAeroCaptionButtons="False"/>
-    </WindowChrome.WindowChrome>
+﻿<ui:FluentWindow
+    x:Class="DocMind.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:behaviors="clr-namespace:DocMind"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:DocMind"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Width="1920"
+    Height="1080"
+    AllowsTransparency="False"
+    Background="#E1E8F0"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
 
     <ui:FluentWindow.Resources>
+
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <local:StringIsNotNullOrEmptyConverter x:Key="StringIsNotNullOrEmptyConverter"/>
-        <local:BooleanToHorizontalAlignmentConverter x:Key="BooleanToHorizontalAlignmentConverter"/>
-        <local:BooleanToBrushConverter x:Key="BooleanToBrushConverter"/>
-        <local:EqualsConverter x:Key="EqualsConverter"/>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <local:StringIsNotNullOrEmptyConverter x:Key="StringIsNotNullOrEmptyConverter" />
+        <local:BooleanToHorizontalAlignmentConverter x:Key="BooleanToHorizontalAlignmentConverter" />
+        <local:BooleanToBrushConverter x:Key="BooleanToBrushConverter" />
+        <local:EqualsConverter x:Key="EqualsConverter" />
+
         <local:FilePreviewTemplateSelector x:Key="FilePreviewTemplateSelector">
             <local:FilePreviewTemplateSelector.TxtTemplate>
                 <DataTemplate>
-                    <RichTextBox x:Name="OriginalTextBox"
-                                 Padding="32,25"
-             VerticalScrollBarVisibility="Auto"
-         IsReadOnly="True" 
-         BorderThickness="0"                            
-         Background="Transparent"
-         FontSize="16"
-         >
+                    <RichTextBox
+                        x:Name="OriginalTextBox"
+                        Padding="32,25"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        FontSize="16"
+                        IsReadOnly="True"
+                        VerticalScrollBarVisibility="Auto">
                         <i:Interaction.Behaviors>
-                            <behaviors:FlowDocumentBehavior BoundDocument="{Binding Display}"/>
+                            <behaviors:FlowDocumentBehavior BoundDocument="{Binding Display}" />
                         </i:Interaction.Behaviors>
 
                     </RichTextBox>
@@ -52,185 +49,168 @@
 
             <local:FilePreviewTemplateSelector.WordTemplate>
                 <DataTemplate>
-                    <DocumentViewer Document="{Binding Display}" Margin="10"/>
+                    <DocumentViewer Margin="10" Document="{Binding Display}" />
                 </DataTemplate>
             </local:FilePreviewTemplateSelector.WordTemplate>
 
             <local:FilePreviewTemplateSelector.ExcelTemplate>
                 <DataTemplate>
-                    <DataGrid 
-                        AutoGenerateColumns="True" 
+                    <DataGrid
+                        Width="auto"
                         Margin="10"
-                        ItemsSource="{Binding Display.DefaultView}"
-                        CanUserAddRows="False"
                         HorizontalAlignment="Stretch"
+                        AutoGenerateColumns="True"
+                        CanUserAddRows="False"
                         ColumnWidth="*"
-                        Width="auto"/>
+                        ItemsSource="{Binding Display.DefaultView}" />
 
                 </DataTemplate>
             </local:FilePreviewTemplateSelector.ExcelTemplate>
 
             <local:FilePreviewTemplateSelector.DefaultTemplate>
                 <DataTemplate>
-                    <StackPanel HorizontalAlignment="Center" 
-                VerticalAlignment="Center">
-                        <ui:SymbolIcon Symbol="DocumentSearch24" 
-                       FontSize="48" 
-                       Margin="0,0,0,12"
-                       Foreground="#CCCCCC"/>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <ui:SymbolIcon
+                            Margin="0,0,0,12"
+                            FontSize="48"
+                            Foreground="#CCCCCC"
+                            Symbol="DocumentSearch24" />
 
-                        <TextBlock Text="请先选择要预览的文档" 
-                   FontSize="14"
-                   HorizontalAlignment="Center"
-                   Foreground="#999999"/>
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="14"
+                            Foreground="#999999"
+                            Text="请先选择要预览的文档" />
 
-                        <TextBlock Text="点击左侧按钮进行上传" 
-                   FontSize="12"
-                   Margin="0,8,0,0"
-                   HorizontalAlignment="Center"
-                   Foreground="#BBBBBB"/>
+                        <TextBlock
+                            Margin="0,8,0,0"
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Foreground="#BBBBBB"
+                            Text="点击左侧按钮进行上传" />
                     </StackPanel>
                 </DataTemplate>
             </local:FilePreviewTemplateSelector.DefaultTemplate>
         </local:FilePreviewTemplateSelector>
 
-        <Storyboard x:Key="BaseAnimation" RepeatBehavior="Forever">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0.2"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1.0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0.2"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.0" Value="0.2"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-
-        <Storyboard x:Key="AnimateDot1" RepeatBehavior="Forever">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
-                <EasingDoubleKeyFrame KeyTime="0" Value="0.2"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="1.0"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value="0.2"/>
-                <EasingDoubleKeyFrame KeyTime="0:0:1.0" Value="0.2"/>
-            </DoubleAnimationUsingKeyFrames>
-        </Storyboard>
-
-        <Storyboard x:Key="AnimateDot2" RepeatBehavior="Forever" BeginTime="0:0:0.2">
-        </Storyboard>
-
-        <Storyboard x:Key="AnimateDot3" RepeatBehavior="Forever" BeginTime="0:0:0.4">
-        </Storyboard>
-
     </ui:FluentWindow.Resources>
 
-    <Grid  VerticalAlignment="Stretch">
+    <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*"/>
-            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="6*" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0"
-        Grid.Column="0" 
-        Grid.ColumnSpan="2"
-        Background="Transparent"
-        MouseLeftButtonDown="OnDragWindow">
+        <Border
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Background="Transparent"
+            MouseLeftButtonDown="OnDragWindow">
 
             <Grid>
-                <StackPanel Orientation="Horizontal" 
-                    HorizontalAlignment="Right" 
-                    VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
-                    <ui:Button 
-                        Margin="0 5 10 0"
-                        Height="30"
-                        Width="30"
-                        Icon="{ui:SymbolIcon Symbol=Dismiss24}"
-                               Background="#2B2B2B"
-                        Foreground="#E6E6E6"
-                        
-                       Click="OnCloseApp"
-                       ToolTip="关闭" >
+                <StackPanel Margin="12,5,0,0" Orientation="Horizontal">
+                    <ui:SymbolIcon FontSize="20" Symbol="BrainCircuit24" />
 
-                    </ui:Button>
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        FontWeight="SemiBold"
+                        Foreground="#202020"
+                        Text="DocMind" />
                 </StackPanel>
+
+                <ui:Button
+                    Grid.Column="1"
+                    Width="30"
+                    Height="30"
+                    Margin="0,5,10,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Background="#2B2B2B"
+                    Click="OnCloseApp"
+                    Foreground="#E6E6E6"
+                    Icon="{ui:SymbolIcon Symbol=Dismiss24}"
+                    ToolTip="关闭" />
             </Grid>
         </Border>
 
-        <Grid  Grid.Row="1" Grid.Column="0" Margin="10">
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            Margin="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
+            <ui:Card
+                Grid.Row="0"
+                Padding="0"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1">
 
-            <ui:Card Grid.Row="0" 
-                     BorderBrush="#E0E0E0" BorderThickness="1"
-         Margin="0,0,0,10"
-         Padding="0"
-         Background="{ui:ThemeResource CardBackgroundFillColorDefaultBrush}">
-
-                <!-- 给父Grid添加行定义，明确区分按钮区和文件列表区 -->
-                <Grid Grid.Row="0">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="40"/>
-                        <!-- 上传按钮行（固定高度） -->
-                        <RowDefinition Height="auto"/>
-                        <!-- 文件列表行（剩余空间） -->
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
 
-                    <!-- 标题栏（上传按钮）放在第0行 -->
                     <Grid Grid.Row="0" Background="#F5F5F5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <ui:Button 
-Grid.Column="0"
-Content="上传文档" 
-Command="{Binding UploadFileCommand}"
-                    Foreground="White"
+                        <ui:Button
+                            Grid.Column="0"
                             Height="30"
+                            Margin="10,0"
+                            Appearance="Dark"
                             Background="#6FCF97"
+                            Command="{Binding UploadFileCommand}"
+                            Content="上传文档"
+                            FontSize="14"
+                            FontWeight="Normal"
+                            Foreground="White"
+                            Icon="{ui:SymbolIcon Symbol=ArrowUpload24}" />
 
-Icon="{ui:SymbolIcon Symbol =ArrowUpload24}"
-Margin="10,0"
-Padding="8,0"
-                    Appearance="Dark"
-FontSize="14"
-FontWeight="Normal"
-                    
-Cursor="Hand"/>
-
-                        <!-- 已上传数量提示 -->
-                        <TextBlock 
-        Grid.Column="1"
-        Text="{Binding UploadedFiles.Count, StringFormat='已上传 ({0})'}"  
-        VerticalAlignment="Center"
-        HorizontalAlignment="Right"
-        Margin="0,0,10,0"
-        Foreground="#666666"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Foreground="#666666"
+                            Text="{Binding UploadedFiles.Count, StringFormat='已上传 ({0})'}" />
                     </Grid>
 
-                    <Border Height="1" 
-Background="{DynamicResource ControlStrokeColorDefaultBrush}" 
-                            VerticalAlignment="Bottom"
-/>
+                    <Border
+                        Height="1"
+                        VerticalAlignment="Bottom"
+                        Background="{DynamicResource ControlStrokeColorDefaultBrush}" />
 
-                    <ScrollViewer 
-    Grid.Row="1"  
-            Height="Auto" 
-    MaxHeight="120" 
-    VerticalScrollBarVisibility="Auto"
-    HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer
+                        Grid.Row="1"
+                        Height="Auto"
+                        MaxHeight="120"
+                        HorizontalScrollBarVisibility="Disabled"
+                        VerticalScrollBarVisibility="Auto">
 
                         <ItemsControl ItemsSource="{Binding UploadedFiles}">
-                            <!-- ItemTemplate保持不变 -->
+                            <!--  ItemTemplate保持不变  -->
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type local:DocumentFile}">
@@ -238,24 +218,22 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
 
                                         <Grid.Style>
                                             <Style TargetType="Grid">
-                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Background" Value="Transparent" />
                                                 <Style.Triggers>
-                                                    <!-- 用DataTrigger + 多值绑定 + 转换器，判断当前项是否等于SelectedFile -->
+                                                    <!--  用DataTrigger + 多值绑定 + 转换器，判断当前项是否等于SelectedFile  -->
                                                     <DataTrigger Value="True">
                                                         <DataTrigger.Binding>
                                                             <MultiBinding Converter="{StaticResource EqualsConverter}">
-                                                                <!-- 绑定1：当前DocumentFile项 -->
-                                                                <Binding/>
-                                                                <!-- 绑定2：ViewModel中的SelectedFile -->
-                                                                <Binding 
-                            RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
-                            Path="DataContext.SelectedFile"/>
+                                                                <!--  绑定1：当前DocumentFile项  -->
+                                                                <Binding />
+                                                                <!--  绑定2：ViewModel中的SelectedFile  -->
+                                                                <Binding Path="DataContext.SelectedFile" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" />
                                                             </MultiBinding>
                                                         </DataTrigger.Binding>
-                                                        <!-- 选中时的样式：淡蓝色背景 -->
+                                                        <!--  选中时的样式：淡蓝色背景  -->
 
-                                                        <Setter Property="Background" Value="#E8F1FC"/>
-                                                        <!-- 文件名选中样式 -->
+                                                        <Setter Property="Background" Value="#E8F1FC" />
+                                                        <!--  文件名选中样式  -->
 
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -263,58 +241,58 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                                         </Grid.Style>
 
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
 
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Cursor="Hand">
-                                            <!-- 通过 InputBinding 绑定鼠标事件与命令 -->
+                                        <StackPanel
+                                            VerticalAlignment="Center"
+                                            Cursor="Hand"
+                                            Orientation="Horizontal">
+                                            <!--  通过 InputBinding 绑定鼠标事件与命令  -->
                                             <StackPanel.InputBindings>
-                                                <!-- 鼠标按下事件绑定 -->
-                                                <MouseBinding 
-        MouseAction="LeftClick"  
-                                            Command="{Binding Path=DataContext.SelectFileCommand, 
-                          RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-        CommandParameter="{Binding}"/>
+                                                <!--  鼠标按下事件绑定  -->
+                                                <MouseBinding
+                                                    Command="{Binding Path=DataContext.SelectFileCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                                    CommandParameter="{Binding}"
+                                                    MouseAction="LeftClick" />
 
                                             </StackPanel.InputBindings>
 
-                                            <ui:SymbolIcon 
-               Margin="12,0,8,0" 
-               FontSize="16"
-               VerticalAlignment="Center"
-               Symbol="Document20"/>
+                                            <ui:SymbolIcon
+                                                Margin="12,0,8,0"
+                                                VerticalAlignment="Center"
+                                                FontSize="16"
+                                                Symbol="Document20" />
 
 
-                                            <TextBlock 
-    Text="{Binding FileName}"  
-    Margin="2,0,5,0"
-    ToolTip="{Binding FilePath}"  
-                                                Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                                            <TextBlock
+                                                Margin="2,0,5,0"
+                                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                                Text="{Binding FileName}"
+                                                ToolTip="{Binding FilePath}">
 
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
-                                                        <!-- 默认文字样式 -->
-                                                        <Setter Property="Foreground" Value="#333333"/>
-                                                        <Setter Property="FontWeight" Value="Normal"/>
+                                                        <!--  默认文字样式  -->
+                                                        <Setter Property="Foreground" Value="#333333" />
+                                                        <Setter Property="FontWeight" Value="Normal" />
 
-                                                        <!-- 选中时的文字样式 -->
+                                                        <!--  选中时的文字样式  -->
                                                         <Style.Triggers>
                                                             <DataTrigger Value="True">
                                                                 <DataTrigger.Binding>
                                                                     <MultiBinding Converter="{StaticResource EqualsConverter}">
-                                                                        <!-- 绑定1：当前DocumentFile项 -->
-                                                                        <Binding/>
-                                                                        <!-- 绑定2：ViewModel中的SelectedFile -->
-                                                                        <Binding 
-                            RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" 
-                            Path="DataContext.SelectedFile"/>
+                                                                        <!--  绑定1：当前DocumentFile项  -->
+                                                                        <Binding />
+                                                                        <!--  绑定2：ViewModel中的SelectedFile  -->
+                                                                        <Binding Path="DataContext.SelectedFile" RelativeSource="{RelativeSource AncestorType={x:Type ItemsControl}}" />
                                                                     </MultiBinding>
                                                                 </DataTrigger.Binding>
-                                                                <!-- 选中时的文字颜色+加粗 -->
-                                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}"/>
+                                                                <!--  选中时的文字颜色+加粗  -->
+                                                                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
 
-                                                                <Setter Property="Background" Value="{DynamicResource AccentColorSecondaryBrush}"/>
+                                                                <Setter Property="Background" Value="{DynamicResource AccentColorSecondaryBrush}" />
 
 
                                                                 <!--<Setter Property="FontWeight" Value="Medium"/>-->
@@ -325,23 +303,23 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
 
                                             </TextBlock>
 
-                                            <TextBlock 
-    Text="{Binding FileSizeKB, StringFormat='({0}KB)'}"  
-    FontSize="12"
-    Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                Text="{Binding FileSizeKB, StringFormat='({0}KB)'}" />
                                         </StackPanel>
 
-                                        <ui:Button 
-                                            Margin="0 0 6 0"
-                    Grid.Column="1"
-                    Width="36" 
-                    Height="32"
-                    BorderThickness="1"
+                                        <ui:Button
+                                            Grid.Column="1"
+                                            Width="36"
+                                            Height="32"
+                                            Margin="0,0,6,0"
                                             Appearance="Transparent"
+                                            BorderThickness="1"
+                                            Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
+                                            CommandParameter="{Binding}"
                                             Foreground="{DynamicResource SystemFillColorCriticalBrush}"
-                                            Icon="{ui:SymbolIcon Symbol =Delete12}" 
-                    Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
-                    CommandParameter="{Binding}"/>
+                                            Icon="{ui:SymbolIcon Symbol=Delete12}" />
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -349,75 +327,64 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>
-
             </ui:Card>
 
+            <ui:Card
+                Grid.Row="1"
+                Margin="0,10,0,0"
+                Padding="5"
+                VerticalAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1">
 
-            <ui:Card Grid.Row="1" VerticalContentAlignment="Stretch" VerticalAlignment="Stretch" BorderBrush="#E0E0E0" BorderThickness="1">
-
-
-                <ScrollViewer  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" VerticalContentAlignment="Stretch"
-          x:Name="ChatScrollViewer">
+                <ScrollViewer x:Name="ChatScrollViewer" VerticalScrollBarVisibility="Auto">
                     <ItemsControl ItemsSource="{Binding Messages}">
-
-
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type local:Message}">
-                                <!-- 单条消息容器 -->
                                 <Grid Margin="5,3">
-                                    <!-- 对齐方式：用户消息靠右，回复消息靠左 -->
                                     <Grid HorizontalAlignment="{Binding IsSentByUser, Converter={StaticResource BooleanToHorizontalAlignmentConverter}}">
-
-                                        <!-- 消息气泡：用Style+DataTrigger控制样式 -->
-                                        <Border 
-        x:Name="MessageBorder"
-        CornerRadius="8" 
-        Padding="12,8" 
-        BorderThickness="1">
+                                        <Border BorderThickness="1" CornerRadius="8">
                                             <Border.Style>
                                                 <Style TargetType="Border">
-                                                    <!-- 默认样式（回复消息） -->
-                                                    <Setter Property="Background" Value="#F0F0F0"/>
-                                                    <Setter Property="BorderBrush" Value="#DDDDDD"/>
-                                                    <!-- 用户消息样式（DataTrigger触发） -->
+                                                    <Setter Property="Background" Value="#F0F0F0" />
+                                                    <Setter Property="BorderBrush" Value="#DDDDDD" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding IsSentByUser}" Value="True">
-                                                            <Setter Property="Background" Value="#5dade2"/>
-                                                            <Setter Property="BorderBrush" Value="#5dade2"/>
+                                                            <Setter Property="Background" Value="#5dade2" />
+                                                            <Setter Property="BorderBrush" Value="#5dade2" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
 
                                             <StackPanel>
-                                                <TextBlock 
-                Margin="4"
-                FontSize="16"
-                Text="{Binding Text}"  
-                MinHeight="20"
-                TextWrapping="Wrap">
-                                    
- <b:Interaction.Behaviors>
-    <local:RichTextHyperlinkBehavior JumpToPageCommand="{Binding DataContext.JumpToPageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
-    <local:RichTextHyperlinkBehavior JumpToParagraphCommand="{Binding DataContext.JumpToParagraphCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
-</b:Interaction.Behaviors>
+                                                <TextBlock
+                                                    MinHeight="20"
+                                                    Margin="4"
+                                                    Padding="5"
+                                                    FontSize="16"
+                                                    Text="{Binding Text}"
+                                                    TextWrapping="Wrap">
+
+                                                    <b:Interaction.Behaviors>
+                                                        <local:RichTextHyperlinkBehavior JumpToPageCommand="{Binding DataContext.JumpToPageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                        <local:RichTextHyperlinkBehavior JumpToParagraphCommand="{Binding DataContext.JumpToParagraphCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                    </b:Interaction.Behaviors>
 
                                                 </TextBlock>
 
-                                                <!-- 时间戳：样式保留不变 -->
-                                                <TextBlock 
-                Text="{Binding Timestamp, StringFormat='HH:mm'}" 
-                FontSize="10" 
-                Margin="0,4,0,0"
-                HorizontalAlignment="Right">
+                                                <TextBlock
+                                                    Margin="0,4,6,6"
+                                                    HorizontalAlignment="Right"
+                                                    FontSize="10"
+                                                    Text="{Binding Timestamp, StringFormat='HH:mm'}">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
-                                                            <!-- 默认样式（回复消息） -->
-                                                            <Setter Property="Foreground" Value="#666666"/>
-                                                            <!-- 用户消息时间（DataTrigger触发） -->
+                                                            <Setter Property="Foreground" Value="#666666" />
                                                             <Style.Triggers>
                                                                 <DataTrigger Binding="{Binding IsSentByUser}" Value="True">
-                                                                    <Setter Property="Foreground" Value="#EEEEEE"/>
+                                                                    <Setter Property="Foreground" Value="#EEEEEE" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -429,84 +396,99 @@ Background="{DynamicResource ControlStrokeColorDefaultBrush}"
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
-
                     </ItemsControl>
                 </ScrollViewer>
-
             </ui:Card>
 
-            <ui:Card Grid.Row="2" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="0 10 0 0"
-                     Background="#F5F5FF" BorderBrush="#D6E4FF" BorderThickness="1" Padding="12,8"
-                     >
+            <ui:Card
+                Grid.Row="2"
+                Margin="0,10,0,0"
+                Padding="12,8"
+                Background="#F5F5FF"
+                BorderBrush="#D6E4FF"
+                BorderThickness="1">
 
                 <Grid>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition />
+                        <RowDefinition />
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="5*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <ui:ProgressRing Width="14" Height="14" Margin="10,0,0,0" 
-                                 IsIndeterminate="True"
-                                 Visibility="{Binding IsRingVisible, Converter={StaticResource BoolToVis}}"/>
-                        <TextBlock Text="{Binding Hint}"
-                                   Margin="10 0 0 0"
-                           FontSize="12" 
-                           Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                           VerticalAlignment="Center"/>
+                    <StackPanel
+                        Grid.Column="0"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
+                        <ui:ProgressRing
+                            Width="14"
+                            Height="14"
+                            Margin="10,0,0,0"
+                            IsIndeterminate="True"
+                            Visibility="{Binding IsRingVisible, Converter={StaticResource BoolToVis}}" />
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="{Binding Hint}" />
                     </StackPanel>
 
-                    <StackPanel Grid.Column="1" 
-            Orientation="Horizontal" 
-            HorizontalAlignment="Right" 
-            VerticalAlignment="Center">
+                    <StackPanel
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal">
 
-                        <TextBlock Text="溯源" 
-               FontSize="12" 
-               VerticalAlignment="Center" 
-               Margin="0,0,8,0" 
-               Foreground="{DynamicResource TextFillColorSecondaryBrush}"/>
+                        <TextBlock
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                            Text="溯源" />
 
-                        <ui:ToggleSwitch IsChecked="{Binding IsSourcingEnabled}" 
-                     ToolTip="开启后将验证答案来源，耗时稍长"
-                     OnContent="" 
-                     OffContent=""
-                     MinWidth="0"
-                     VerticalAlignment="Center"/>
+                        <ui:ToggleSwitch
+                            MinWidth="0"
+                            VerticalAlignment="Center"
+                            IsChecked="{Binding IsSourcingEnabled}"
+                            OffContent=""
+                            OnContent=""
+                            ToolTip="开启后将验证答案来源，耗时稍长" />
                     </StackPanel>
 
-                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0"
-                          
-                          >
+                    <Grid
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,10,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="7*" />
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*" />
 
                         </Grid.ColumnDefinitions>
 
-                        <TextBox x:Name="message"
-                Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" 
-                KeyDown="TextBox_KeyDown"
-                VerticalContentAlignment="Center"
-                BorderBrush="#DDDDDD"
-                BorderThickness="1"
-                Padding="10"/>
+                        <TextBox
+                            x:Name="message"
+                            Padding="10"
+                            VerticalContentAlignment="Center"
+                            BorderBrush="#DDDDDD"
+                            BorderThickness="1"
+                            KeyDown="TextBox_KeyDown"
+                            Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <ui:Button Grid.Column="1" 
-                                HorizontalAlignment="Right"
-                                Height="40"
-                                Width="80"
-                                   Appearance="Transparent"
-                                   Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
-                                   Icon="{ui:SymbolIcon Symbol=Send24}"
-Content="发送" 
-Command="{Binding SendMessageCommand}"/>
+                        <ui:Button
+                            Grid.Column="1"
+                            Width="80"
+                            Height="40"
+                            HorizontalAlignment="Right"
+                            Appearance="Transparent"
+                            Command="{Binding SendMessageCommand}"
+                            Content="发送"
+                            Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                            Icon="{ui:SymbolIcon Symbol=Send24}" />
 
 
                     </Grid>
@@ -518,71 +500,77 @@ Command="{Binding SendMessageCommand}"/>
         </Grid>
 
         <ui:Card
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="0,10,10,10"
             VerticalAlignment="Stretch"
             VerticalContentAlignment="Stretch"
-            BorderBrush="#E0E0E0" BorderThickness="1"
-            Margin="0 10 10 10"
-    Grid.Column="1"
-            Grid.Row="1">
+            BorderBrush="#E0E0E0"
+            BorderThickness="1">
 
-            <Grid Background="#FAFAFA" VerticalAlignment="Stretch">
+            <Grid VerticalAlignment="Stretch" Background="#FAFAFA">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <!-- 标题行 -->
+                <!--  标题行  -->
                 <Grid Grid.Row="0" Background="#F5F5F5">
 
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 
-                        <ui:SymbolIcon Symbol="Document24" Margin="10,0,8,1" Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"/>
+                        <ui:SymbolIcon
+                            Margin="10,0,8,1"
+                            Foreground="{DynamicResource SystemAccentColorPrimaryBrush}"
+                            Symbol="Document24" />
 
                         <TextBlock
-Text="{Binding SelectedFile.FileName, FallbackValue='文档预览'}"
-VerticalAlignment="Center"
-FontWeight="Medium"/>
+                            VerticalAlignment="Center"
+                            FontWeight="Medium"
+                            Text="{Binding SelectedFile.FileName, FallbackValue='文档预览'}" />
 
                     </StackPanel>
 
 
                 </Grid>
 
-                <Separator Grid.Row="1"  />
+                <Separator Grid.Row="1" />
 
-                <!-- 内容行 -->
+                <!--  内容行  -->
                 <ContentControl
-                    VerticalContentAlignment="Stretch"
+                    x:Name="previewContentControl"
+                    Grid.Row="2"
                     VerticalAlignment="Stretch"
-            Grid.Row="2"
-            x:Name="previewContentControl"
-            Content="{Binding SelectedFile}"
-            ContentTemplateSelector="{StaticResource FilePreviewTemplateSelector}"/>
+                    VerticalContentAlignment="Stretch"
+                    Content="{Binding SelectedFile}"
+                    ContentTemplateSelector="{StaticResource FilePreviewTemplateSelector}" />
             </Grid>
 
         </ui:Card>
 
 
 
-        <Grid 
-            Grid.ColumnSpan="2"
-            Grid.RowSpan="2"
+        <Grid
             x:Name="GlobalLoadingOverlay"
-      Background="#40000000" 
-      Panel.ZIndex="999"
-      Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            Panel.ZIndex="999"
+            Background="#40000000"
+            Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
 
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <ui:ProgressRing IsIndeterminate="True" 
-                         Width="60" 
-                         Height="60"
-                         Foreground="DarkGray"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ui:ProgressRing
+                    Width="60"
+                    Height="60"
+                    Foreground="DarkGray"
+                    IsIndeterminate="True" />
 
-                <ui:TextBlock Text="{Binding LoadMessage, FallbackValue='Loading...'}"
-                      Margin="0,10,0,0"
-                      FontWeight="Medium"
-                      Foreground="White"/>
+                <ui:TextBlock
+                    Margin="0,10,0,0"
+                    FontWeight="Medium"
+                    Foreground="White"
+                    Text="{Binding LoadMessage, FallbackValue='Loading...'}" />
             </StackPanel>
         </Grid>
 
