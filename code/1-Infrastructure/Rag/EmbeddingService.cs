@@ -18,7 +18,6 @@ namespace DocMind
         private bool _disposed = false;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
 
-        //test
         public EmbeddingService()
         {
             try
