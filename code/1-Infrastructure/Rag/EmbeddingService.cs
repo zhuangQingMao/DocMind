@@ -16,26 +16,33 @@ namespace DocMind
         private string _modelPath;
         private ModelParams _modelParams;
         private bool _disposed = false;
-        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _lock = new(1, 1);
 
-        //test
         public EmbeddingService()
         {
             try
             {
-                _modelPath = @"D:\code\bge-large-zh-v1.5-q4_k_m.gguf";
+                _modelPath = @"D:\code\gte-qwen2-1.5b-instruct-Q5_K_M.gguf";
                 _modelParams = new ModelParams(_modelPath)
                 {
-                    ContextSize = 1024,
-                    GpuLayerCount = 20,
-                    Seed = 42,
+                    ContextSize = 32768,
+                    GpuLayerCount = 50,
+                    MainGpu = 0,
+                    Embeddings = true,
+                    SplitMode = LLama.Native.GPUSplitMode.None,
                     UseMemoryLock = false,
-                    Embeddings = true
+                    UseMemorymap = true,
+                    FlashAttention = true,
+                    BatchSize = 1024,
+                    UBatchSize = 1024,
+                    Threads = 8,
+                    PoolingType = LLama.Native.LLamaPoolingType.Mean
                 };
 
                 _model = LLamaWeights.LoadFromFile(_modelParams);
                 _embedder = new LLamaEmbedder(_model, _modelParams);
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show($"EmbeddingService初始化失败: {ex}");
@@ -54,7 +61,7 @@ namespace DocMind
 
             try
             {
-                return await _embedder.GetEmbeddings(text);
+                return (await _embedder.GetEmbeddings(text))[0];
             }
             catch (Exception ex)
             {

@@ -6,6 +6,8 @@ namespace DocMind
     {
         private readonly string _connectionString;
         private const string TableName = "DocumentVectors";
+        private const float Similarity = 0.6f;
+        private const float SecondSimilarity = 0.4f;
 
         private VectorRepository()
         {
@@ -87,7 +89,7 @@ namespace DocMind
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<List<ChunkSortResult>> FindRelevantChunks(string fileId, float[] queryVector, int topK)
+        public async Task<(bool, List<ChunkSortResult>)> FindRelevantChunks(string fileId, float[] queryVector)
         {
             var allRecords = new List<ChunkRecord>();
 
@@ -109,7 +111,7 @@ namespace DocMind
                     allRecords.Add(new ChunkRecord
                     {
                         OriginalText = reader.GetString(0),
-                        ChunkIndex = Convert.ToInt32(reader.GetString(2)),
+                        ChunkIndex = reader.GetInt32(2),
                         Vector = vector
                     });
                 }
@@ -122,11 +124,26 @@ namespace DocMind
                     Score = CosineSimilarity(queryVector, record.Vector),
                     PageNumber = record.ChunkIndex,
                 })
-                .OrderByDescending(r => r.Score)
-                .Take(topK)
                 .ToList();
 
-            return resultsWithScores;
+            var highQualityResults = resultsWithScores
+                .Where(s => s.Score >= Similarity)
+                .OrderByDescending(r => r.Score)
+                .ToList();
+
+            if (highQualityResults.Count > 0)
+                return (false, highQualityResults);
+
+            var fallbackResults = resultsWithScores
+                .Where(s => s.Score >= SecondSimilarity)
+                .OrderByDescending(r => r.Score)
+                .Take(2)
+                .ToList();
+
+            if (fallbackResults.Count > 0)
+                return (true, fallbackResults);
+
+            throw new Exception("查无相关信息");
         }
 
         private static byte[] FloatArrayToByteArray(float[] floats)

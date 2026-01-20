@@ -48,25 +48,37 @@
         public async Task<string> GetOriginContext(string userQuestion, FileType type, string fileId)
         {
             var queryVector = await embeddingService.GetVectorAsync(userQuestion);
-            var relevantText = await repository.FindRelevantChunks(fileId, queryVector, 10);
 
-            return SpliceContext(relevantText, type);
+            (bool isBlur, List<ChunkSortResult> relevantText) = await repository.FindRelevantChunks(fileId, queryVector);
+
+            return SpliceContext(relevantText, type, isBlur);
         }
 
-        private string SpliceContext(List<ChunkSortResult> results, FileType type)
+        private string SpliceContext(List<ChunkSortResult> results, FileType type, bool isBlur)
         {
             if (results == null || results.Count == 0)
                 return "无相关信息";
 
             const string CHUNK_SEPARATOR = "\n\n### CHUNK ###\n\n";
 
+            var context = "";
+
+            if (isBlur)
+            {
+                context += "\n\n*** 文档中没有直接对应问题的详细描述。以下是相关的参考片段，请尝试结合这些片段给予用户回答，并明确告知用户这些信息仅供参考，可能不直接对应问题。 ***\n\n";
+            }
+
+            context += CHUNK_SEPARATOR;
+
             if (type == FileType.Txt)
-                return string.Join(CHUNK_SEPARATOR, results.Select(a => a.Record.OriginalText));
+                context += string.Join(CHUNK_SEPARATOR, results.Select(a => a.Record.OriginalText));
 
-            if (type == FileType.Word)
-                return string.Join(CHUNK_SEPARATOR, results.Select(a => $"页码：{a.PageNumber}，内容：{a.Record.OriginalText}"));
+            else if (type == FileType.Word)
+                context += string.Join(CHUNK_SEPARATOR, results.Select(a => $"页码：{a.PageNumber}，内容：{a.Record.OriginalText}"));
 
-            return "";
+            context += CHUNK_SEPARATOR;
+
+            return context;
         }
 
         public async IAsyncEnumerable<string> firstChat_Stream(string userQuestion, string context, FileType type)
@@ -77,7 +89,7 @@
 {context}
 ### CONTEXT END ###
 
-请严格根据上面的 [上下文资料]，回答以下用户的问题：
+请严格根据上面的 [上下文资料] ### CHUNK ### 标识之间的内容进行回答，回答以下用户的问题：
 ### 用户问题：
 {userQuestion}";
 
