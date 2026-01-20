@@ -6,7 +6,7 @@ namespace DocMind
     {
         private readonly string _connectionString;
         private const string TableName = "DocumentVectors";
-        private const float Similarity = 0.6f;
+        private const float Similarity = 0.55f;
         private const float SecondSimilarity = 0.4f;
 
         private VectorRepository()

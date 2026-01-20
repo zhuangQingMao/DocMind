@@ -353,7 +353,7 @@
                     <ItemsControl ItemsSource="{Binding Messages}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type local:Message}">
-                                <Grid Margin="5,3">
+                                <Grid Margin="0,5,15,12">
                                     <Grid HorizontalAlignment="{Binding IsSentByUser, Converter={StaticResource BooleanToHorizontalAlignmentConverter}}">
                                         <Border BorderThickness="1" CornerRadius="8">
                                             <Border.Style>
