@@ -380,8 +380,7 @@
                                                     TextWrapping="Wrap">
 
                                                     <b:Interaction.Behaviors>
-                                                        <local:RichTextHyperlinkBehavior JumpToPageCommand="{Binding DataContext.JumpToPageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
-                                                        <local:RichTextHyperlinkBehavior JumpToParagraphCommand="{Binding DataContext.JumpToParagraphCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+                                                        <local:RichTextHyperlinkBehavior JumpToPageCommand="{Binding DataContext.JumpToPageCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" JumpToParagraphCommand="{Binding DataContext.JumpToParagraphCommand, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
                                                     </b:Interaction.Behaviors>
 
                                                 </TextBlock>

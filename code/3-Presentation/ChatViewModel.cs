@@ -21,7 +21,7 @@ namespace DocMind
         public ObservableCollection<Message> Messages { get; } = [];
 
         [ObservableProperty]
-        private string _userQuestion;
+        private string _userQuestion = "";
 
         [ObservableProperty]
         private bool _isLoading = false;
