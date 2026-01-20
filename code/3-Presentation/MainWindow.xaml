@@ -112,24 +112,30 @@
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Background="Transparent"
+            Background="#F3F3F3"
+            BorderBrush="#E0E0E0"
+            BorderThickness="0,0,0,1"
             MouseLeftButtonDown="OnDragWindow">
 
-            <Grid>
+            <Grid Margin="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Margin="12,5,0,0" Orientation="Horizontal">
-                    <ui:SymbolIcon FontSize="20" Symbol="BrainCircuit24" />
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon
+                        Margin="8,0,0,0"
+                        FontSize="20"
+                        Foreground="#444444"
+                        Symbol="BrainCircuit24" />
 
                     <TextBlock
-                        Margin="10,0,0,0"
+                        Margin="6,0,0,0"
                         VerticalAlignment="Center"
                         FontSize="16"
                         FontWeight="SemiBold"
-                        Foreground="#202020"
+                        Foreground="#444444"
                         Text="DocMind" />
                 </StackPanel>
 
@@ -137,12 +143,13 @@
                     Grid.Column="1"
                     Width="30"
                     Height="30"
-                    Margin="0,5,10,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Background="#2B2B2B"
+                    Background="Transparent"
+                    BorderBrush="DarkGray"
+                    BorderThickness="1"
                     Click="OnCloseApp"
-                    Foreground="#E6E6E6"
+                    Foreground="#CC3333"
                     Icon="{ui:SymbolIcon Symbol=Dismiss24}"
                     ToolTip="关闭" />
             </Grid>
@@ -467,8 +474,8 @@
                             ToolTip="开启后将验证答案来源，耗时稍长" />
                     </StackPanel>
 
-                    <!--  聊天框+按钮  -->
-                    <TextBox
+                    <!--  聊天框 + 按钮  -->
+                    <ui:TextBox
                         x:Name="message"
                         Grid.Row="1"
                         Grid.Column="0"
@@ -478,7 +485,9 @@
                         VerticalContentAlignment="Center"
                         BorderBrush="DarkGray"
                         BorderThickness="1"
+                        Cursor="IBeam"
                         KeyDown="TextBox_KeyDown"
+                        PlaceholderText="请输入消息..."
                         Text="{Binding UserQuestion, UpdateSourceTrigger=PropertyChanged}" />
 
                     <ui:Button

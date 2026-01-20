@@ -8,8 +8,8 @@ namespace DocMind
 {
     public static class RichTextBoxHighlighter
     {
-        private static TextPointer? _start;
-        private static TextPointer? _end;
+        private static int _start;
+        private static int _end;
         private static string _defaultHighLightColor = "#D6E4FF";
 
         public static void HighlightByTextContent(RichTextBox richTextBox, List<string> spans, bool isSingleSencente = false)
@@ -18,11 +18,17 @@ namespace DocMind
                 return;
 
             if (!isSingleSencente)
+            {
                 ClearAllHighlights(richTextBox);
+                _start = 0;
+                _end = 0;
+            }
 
             var fullText = GetFullRenderedText(richTextBox.Document);
             var scrollViewer = FindVisualChild<ScrollViewer>(richTextBox);
+
             TextPointer? firstHighlightPosition = null;
+            TextPointer? currentHighlightPosition = null;
 
             string colorCode = isSingleSencente ? "#FFFF00" : _defaultHighLightColor;
 
@@ -32,12 +38,15 @@ namespace DocMind
                 if (startIndex == -1)
                     continue;
 
+                var endIndex = startIndex + targetText.Length;
+
                 var startPos = FindPositionByCharacterIndex(richTextBox.Document, startIndex);
-                var endPos = FindPositionByCharacterIndex(richTextBox.Document, startIndex + targetText.Length);
+                var endPos = FindPositionByCharacterIndex(richTextBox.Document, endIndex);
 
                 if (startPos != null && endPos != null)
                 {
                     firstHighlightPosition ??= startPos;
+                    currentHighlightPosition ??= startPos;
 
                     var bc = new BrushConverter();
 
@@ -48,20 +57,37 @@ namespace DocMind
 
                     if (isSingleSencente)
                     {
-                        if (_start != null && _end != null)
-                            ClearHighlight(richTextBox, _start, _end);
+                        if (_start != 0 && _end != 0 && _start != startIndex && _end != endIndex)
+                        {
+                            RecoverLastHighlight(richTextBox, _start, _end);
+                        }
 
-                        _start = startPos;
-                        _end = endPos;
+                        _start = startIndex;
+                        _end = endIndex;
                     }
                 }
             }
 
-            if (firstHighlightPosition != null && scrollViewer != null)
+            double margin = 50;
+
+            if (isSingleSencente)
+            {
+                if (currentHighlightPosition != null && scrollViewer != null)
+                {
+                    Rect rect = currentHighlightPosition.GetCharacterRect(LogicalDirection.Forward);
+
+                    double targetOffset = rect.Top + scrollViewer.VerticalOffset - margin;
+
+                    targetOffset = Math.Max(0, Math.Min(targetOffset, scrollViewer.ScrollableHeight));
+
+                    scrollViewer.ScrollToVerticalOffset(targetOffset);
+                }
+            }
+            else if (firstHighlightPosition != null && scrollViewer != null)
             {
                 Rect rect = firstHighlightPosition.GetCharacterRect(LogicalDirection.Forward);
 
-                double targetOffset = rect.Top + scrollViewer.VerticalOffset;
+                double targetOffset = rect.Top + scrollViewer.VerticalOffset - margin;
 
                 targetOffset = Math.Max(0, Math.Min(targetOffset, scrollViewer.ScrollableHeight));
 
@@ -153,12 +179,15 @@ namespace DocMind
             fullRange.ApplyPropertyValue(TextElement.BackgroundProperty, Brushes.Transparent);
         }
 
-        public static void ClearHighlight(RichTextBox richTextBox, TextPointer start, TextPointer end)
+        public static void RecoverLastHighlight(RichTextBox richTextBox, int start, int end)
         {
             if (richTextBox == null)
                 return;
 
-            var range = new TextRange(start, end);
+            var startPos = FindPositionByCharacterIndex(richTextBox.Document, start);
+            var endPos = FindPositionByCharacterIndex(richTextBox.Document, end);
+
+            var range = new TextRange(startPos, endPos);
 
             var bc = new BrushConverter();
 
